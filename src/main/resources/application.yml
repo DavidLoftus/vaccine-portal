@@ -1,0 +1,12 @@
+server.port: 8080
+spring:
+  application.name: vaccine-portal
+
+  datasource:
+    url: "jdbc:mysql://localhost:3306/vaccine"
+    username: root
+    password: example
+
+  jpa.hibernate.ddl-auto: create
+
+logging.level.root: debug
