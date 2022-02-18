@@ -33,10 +33,10 @@ description = 'Vaccine Registration Portal'
 
 
 //docker {
-//    name "${project.parent.name}/${project.name}:${project.version}"
+//    name "howdo:${project.version}"
 //    files bootJar.archiveFile
 //    buildArgs([
 //            APP_FILE: bootJar.archiveFileName.get()
 //    ])
-//    tag 'latest', "${project.parent.name}/${project.name}:latest"
+//    tag 'latest', "howdo/${project.name}:latest"
 //}
