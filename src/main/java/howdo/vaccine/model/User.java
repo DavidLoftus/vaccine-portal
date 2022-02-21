@@ -1,10 +1,9 @@
 package howdo.vaccine.model;
 
-import javax.management.DescriptorKey;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -41,8 +40,13 @@ public class User {
     @NotBlank
     private String nationality;
 
-    @OneToMany
-    private Collection<VaccineDose> doses;
+    @OneToMany(mappedBy = "user")
+    @OrderBy("dose")
+    private List<VaccineDose> doses;
+
+    @OneToMany(mappedBy = "user")
+    @OrderBy("appointmentTime")
+    private List<Appointment> appointments;
 
     public Long getId() {
         return id;

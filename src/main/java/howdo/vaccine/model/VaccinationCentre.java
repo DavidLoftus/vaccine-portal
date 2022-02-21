@@ -11,7 +11,7 @@ public class VaccinationCentre {
     @Id
     private Long id;
 
-    @OneToMany
+    @OneToMany(mappedBy = "location")
     List<Appointment> appointments;
 
 }
