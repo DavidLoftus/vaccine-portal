@@ -7,6 +7,6 @@ spring:
     username: root
     password: example
 
-  jpa.hibernate.ddl-auto: create
+  jpa.hibernate.ddl-auto: update
 
 logging.level.root: debug

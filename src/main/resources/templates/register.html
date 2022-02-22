@@ -7,6 +7,9 @@
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
 </head>
 <body>
+<!--/*@thymesVar id="user" type="howdo.vaccine.model.User"*/-->
+
+
 <div>
 
     <!--
@@ -16,9 +19,47 @@
     Only users who are over 18 can register in the system correctly.
     -->
 
-    <form method="post">
-        <input name="username">
-        <input name="password" type="password">
+    <form method="post" th:action="@{/register}" th:object="${user}">
+        <label>
+            PPSN:
+            <input th:field="*{ppsNumber}">
+        </label>
+        <br>
+        <label>
+            Password:
+            <input type="password" th:field="*{password}">
+        </label>
+        <br>
+        <label>
+            First Name:
+            <input th:field="*{firstName}">
+        </label>
+        <br>
+        <label>
+            Last Name:
+            <input th:field="*{lastName}">
+        </label>
+        <br>
+        <label>
+            Nationality:
+            <input th:field="*{nationality}">
+        </label>
+        <br>
+        <label>
+            Phone Number:
+            <input th:field="*{phoneNumber}">
+        </label>
+        <br>
+        <label>
+            DoB:
+            <input type="date" th:field="*{dateOfBirth}">
+        </label>
+        <br>
+        <label>
+            Email:
+            <input type="email" th:field="*{emailAddress}">
+        </label>
+        <br>
         <input type="submit">
     </form>
 
