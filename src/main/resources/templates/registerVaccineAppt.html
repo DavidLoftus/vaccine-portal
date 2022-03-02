@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+</head>
+<body>
+<!--/*@thymesVar id="user" type="howdo.vaccine.model.User"*/-->
+
+
+<div>
+
+    <!--
+    TODO: Implement vaccine registration form
+    Logged-in users can set an appointment to get a vaccine dose
+    Users provide a time and a location for the appointment; that timeslot will be blocked as a result
+    Distinguish between first and second dose appointments; second doses are booked automatically 21days after the User receives their first
+    -->
+
+    <form method="post" th:action="@{/appointments}" th:object="${appointment}">
+        <label>
+            Select a Timeslot:
+            <input type="date" th:field="*{appointmentTime}">
+        </label>
+        <br>
+        <label>
+            Select a Location:
+            <select name="location">
+                <!-- use th to iterate through the vaccination centres-->
+            </select>
+        </label>
+        <br>
+        <input type="submit">
+    </form>
+
+</div>
+</body>
+</html>
