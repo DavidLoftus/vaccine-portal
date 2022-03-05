@@ -1,6 +1,7 @@
 package howdo.vaccine.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 public class VaccinationCentre {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     @OneToMany(mappedBy = "location")
