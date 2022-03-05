@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${thread.title}">Thread title</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+</head>
+<body>
+    <b th:text="${thread.title}"></b>
+
+    <div>
+        <div th:each="post : ${thread.posts}">
+            <b th:text="|${post.author.firstName}:|">John</b>
+            <p th:text="${post.content}">Whats the deal with airplane food.</p>
+        </div>
+    </div>
+
+</body>
+</html>
