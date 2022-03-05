@@ -44,10 +44,18 @@ public class AuthController {
         response.sendRedirect("/home");
     }
 
-    @GetMapping("/home")
-    @PreAuthorize("hasAuthority('USER')")
-    public String home() {
-        return "home";
+    @Value("${portal.admin.password}")
+    private String adminPassword = "password";
+
+    @PostConstruct
+    public void init() {
+        try {
+            userService.getUser("admin");
+        } catch (UsernameNotFoundException e) {
+            userService.createUser("admin", "password", "John", "Smith",
+                    new Date(), "0123456789", "admin@localhost", "Irish",
+                    Set.of("USER", "ADMIN"));
+        }
     }
 
 }
