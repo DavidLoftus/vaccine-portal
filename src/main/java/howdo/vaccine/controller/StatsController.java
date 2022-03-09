@@ -22,7 +22,12 @@ public class StatsController {
     @Autowired
     VaccinationCentreRepository vaccinationCentreRepository;
 
-    @RequestMapping({"/stats"})
+    @ModelAttribute("page")
+    public String getPage() {
+        return "home";
+    }
+
+    @RequestMapping({"/"})
     public String viewHomePage(Model model) {
         int userTotal = userRepository.userTotal();
         int doseTotal = vaccineDoseRepository.doseTotal();
