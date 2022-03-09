@@ -6,6 +6,7 @@ import howdo.vaccine.model.VaccinationCentre;
 import howdo.vaccine.repository.UserRepository;
 import howdo.vaccine.repository.VaccineAptRepository;
 import howdo.vaccine.repository.VaccineCentreRepository;
+import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,9 @@ public class VaccineController {
     @Autowired
     VaccineCentreRepository centreRepository;
 
+    @Autowired
+    UserService userService;
+
     //add a new Appointment object and a list of VaccinationCentres to the model
     @ModelAttribute
     public void addAttributes(Model model)
@@ -48,22 +52,22 @@ public class VaccineController {
 
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @ModelAttribute User user) throws IOException, ParseException {
+    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
         //parse the data from the form
-        String dateString = request.getParameter("date");           //date is in form yyyy-mm-dd
-        String locationString = request.getParameter("location");   //contains the ID
+        //String dateString = request.getParameter("date");           //date is in form yyyy-mm-dd
+        String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
+        User user = userService.getCurrentUser();
 
-        //convert to the right types for the Appointment object
-        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+        //find the right VaccinationCentre
         VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
+        long id = appointmentRepository.findAll().size() + 1;
 
         System.out.println("\n\n\n"+"TEST"+"\n\n\n");
-        System.out.println("\n\n\n"+request.getParameter("date")+"\n\n\n");
+        System.out.println("\n\n\n"+request.getParameter("user")+"\n\n\n");
 
         //the appointment object contains a date and a vaccination centre from the form
-        Appointment appointment = new Appointment();
+        appointment.setId(id);
         appointment.setUser(user);
-        appointment.setAppointmentTime(date);
         appointment.setLocation(location);
         appointmentRepository.save(appointment);
 

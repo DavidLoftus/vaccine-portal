@@ -13,16 +13,15 @@
 <div>
 
     <!--
-    TODO: Implement vaccine registration form
     Logged-in users can set an appointment to get a vaccine dose
     Users provide a time and a location for the appointment; that timeslot will be blocked as a result
     Distinguish between first and second dose appointments; second doses are booked automatically 21days after the User receives their first
     -->
 
-    <form method="post" th:action="@{/appointments}"> <!--th:action="@{/appointments}" th:object="${appointment}">-->
+    <form method="post" th:action="@{/appointments}" th:object="${appointment}">
         <label>
             Select a Timeslot:
-            <input type="date" name="date" /> <!--th:field="*{appointmentTime}"/> -->
+            <input type="date" name="date" th:field="*{appointmentTime}"/>
         </label>
         <br>
         <label>
@@ -34,8 +33,6 @@
             </select>
         </label>
         <br>
-<!--        <input type="hidden" name="${_csrf.parameterName}"-->
-<!--               value="${_csrf.token}"/>-->
         <input type="submit">
     </form>
 
