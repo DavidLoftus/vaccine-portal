@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stats</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {
+            packages: ['corechart']
+        });
+    </script>
+</head>
+<body>
+
+    <table class="statsTable">
+        <tr><th><h1>Stats</h1></th></tr>
+        <tr>
+            <th>Number of registered citizens:</th>
+            <th th:text="${userTotal}"></th>
+        </tr>
+        <tr>
+            <th>Number of vaccinated citizens:</th>
+            <th th:text="${doseTotal}"></th>
+        </tr>
+        <tr>
+            <th>Percentage of Ireland's population that are vaccinated:</th>
+            <th th:text="${vaccinatedPercentage}"></th><th>%</th>
+        </tr>
+        <tr>
+            <th>Number of Operating Vaccination Centres:</th>
+            <th th:text="${vaccinationCentreTotal}"></th>
+        </tr>
+
+    </table>
+
+    <div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
+    <script language="JavaScript">
+        function drawChart() {
+
+            var userTotal = [[${userTotal}]];
+            var doseTotal = [[${doseTotal}]];
+
+            /* Define the chart to be drawn.*/
+            var data = google.visualization.arrayToDataTable([
+                ['Number of Registered Citizens versus Number of Vaccinated Citizens', 'Number of People'],
+                ['Registered Citizens', userTotal],
+                ['Vaccinated Citizens', doseTotal]
+            ]);
+            var options = {
+                title: 'Number of Registered Citizens versus Number of Vaccinated Citizens',
+                isStacked: true
+            };
+            /* Instantiate and draw the chart.*/
+            var chart = new google.visualization.BarChart(document.getElementById('container'));
+            chart.draw(data, options);
+        }
+        google.charts.setOnLoadCallback(drawChart);
+
+    </script>
+
+
+    <div id="container2" style="width: 550px; height: 400px; margin: 0 auto"></div>
+    <script language="JavaScript">
+        function drawChart() {
+
+            var userTotal = [[${userTotal}]];
+            var doseTotal = [[${doseTotal}]];
+
+            /* Define the chart to be drawn.*/
+            var data = google.visualization.arrayToDataTable([
+                ['TEST', 'TEST'],
+                ['Registered Citizens', userTotal],
+                ['Vaccinated Citizens', doseTotal]
+            ]);
+            var options = {
+                title: 'TEST',
+                isStacked: true
+            };
+            /* Instantiate and draw the chart.*/
+            var chart = new google.visualization.BarChart(document.getElementById('container2'));
+            chart.draw(data, options);
+        }
+        google.charts.setOnLoadCallback(drawChart);
+
+    </script>
+
+
+
+
+</body>
+</html>
