@@ -5,8 +5,13 @@
     <meta charset="UTF-8"/>
     <title>Home</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+
 </head>
 <body>
+
+<header th:insert="fragments/general :: header"></header>
 <div>
 
     <table>
@@ -34,7 +39,7 @@
             <input th:field="*{title}">
         </label>
         <label>
-            Title:
+            Content:
             <textarea th:field="*{content}"></textarea>
         </label>
         <input type="submit">

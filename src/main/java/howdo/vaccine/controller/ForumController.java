@@ -28,6 +28,11 @@ public class ForumController {
     @Autowired
     private ForumPostRepository postRepo;
 
+    @ModelAttribute("page")
+    public String getPage() {
+        return "forum";
+    }
+
     @GetMapping("")
     public String getQuestions(Model model, @ModelAttribute NewThread newThread) {
         List<ForumThread> threads = threadRepo.findAll();
@@ -67,7 +72,23 @@ public class ForumController {
     @GetMapping("/{id}")
     public String getThread(@PathVariable("id") long id, Model model) {
         model.addAttribute("thread", threadRepo.getOne(id));
+        model.addAttribute("id", id);
         return "forum_thread";
+    }
+
+    @PostMapping("/{id}")
+    public void newComment(HttpServletResponse response, @PathVariable("id") long id, @RequestParam String content, Model model) throws IOException {
+        ForumThread thread = threadRepo.getOne(id);
+
+        ForumPost post = new ForumPost();
+        post.setAuthor(userService.getCurrentUser());
+        post.setContent(content);
+        post.setThread(thread);
+        post.setDateCreated(new Date());
+
+        postRepo.save(post);
+
+        response.sendRedirect("/forum/" + thread.getId());
     }
 
 }

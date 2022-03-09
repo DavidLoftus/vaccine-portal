@@ -5,8 +5,12 @@
     <meta charset="UTF-8"/>
     <title th:text="${thread.title}">Thread title</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+
 </head>
 <body>
+
+<header th:insert="fragments/general :: header"></header>
     <b th:text="${thread.title}"></b>
 
     <div>
@@ -15,6 +19,14 @@
             <p th:text="${post.content}">Whats the deal with airplane food.</p>
         </div>
     </div>
+
+    <form method="post" th:action="@{'/forum/' + ${id}}">
+        <label>
+            Content:
+            <textarea name="content"></textarea>
+        </label>
+        <input type="submit">
+    </form>
 
 </body>
 </html>
