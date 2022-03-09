@@ -5,12 +5,13 @@
     <meta charset="UTF-8"/>
     <title>Register</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
 </head>
 <body>
 <!--/*@thymesVar id="user" type="howdo.vaccine.model.User"*/-->
 
-
-<div>
+<div class="container">
 
     <!--
     TODO: Implement registration form
@@ -20,47 +21,47 @@
     -->
 
     <form method="post" th:action="@{/register}" th:object="${user}">
-        <label>
-            PPSN:
-            <input th:field="*{ppsNumber}">
-        </label>
+        <div class="form-group">
+            <label for="ppsNumberFormInput">PPSN</label>
+            <input class="form-control" id="ppsNumberFormInput" th:field="*{ppsNumber}"/>
+        </div>
         <br>
-        <label>
-            Password:
-            <input type="password" th:field="*{password}">
-        </label>
+        <div class="form-group">
+            <label for="passwordFormInput">Password</label>
+            <input class="form-control" id="passwordFormInput" type="password" th:field="*{password}"/>
+        </div>
         <br>
-        <label>
-            First Name:
-            <input th:field="*{firstName}">
-        </label>
+        <div class="form-group">
+            <label for="firstNameFormInput">First Name</label>
+            <input class="form-control" id="firstNameFormInput" th:field="*{firstName}"/>
+        </div>
         <br>
-        <label>
-            Last Name:
-            <input th:field="*{lastName}">
-        </label>
+        <div class="form-group">
+            <label for="lastNameFormInput">Last Name</label>
+            <input class="form-control" id="lastNameFormInput" th:field="*{lastName}"/>
+        </div>
         <br>
-        <label>
-            Nationality:
-            <input th:field="*{nationality}">
-        </label>
+        <div class="form-group">
+            <label for="nationalityFormInput">Nationality</label>
+            <input class="form-control" id="nationalityFormInput" th:field="*{nationality}"/>
+        </div>
         <br>
-        <label>
-            Phone Number:
-            <input th:field="*{phoneNumber}">
-        </label>
+        <div class="form-group">
+            <label for="phoneNumberFormInput">Phone Number</label>
+            <input class="form-control" id="phoneNumberFormInput" th:field="*{phoneNumber}"/>
+        </div>
         <br>
-        <label>
-            DoB:
-            <input type="date" th:field="*{dateOfBirth}">
-        </label>
+        <div class="form-group">
+            <label for="dateOfBirthFormInput">DoB</label>
+            <input class="form-control" id="dateOfBirthFormInput" type="date" th:field="*{dateOfBirth}"/>
+        </div>
         <br>
-        <label>
-            Email:
-            <input type="email" th:field="*{emailAddress}">
-        </label>
+        <div class="form-group">
+            <label for="emailAddressFormInput">Email</label>
+            <input class="form-control" id="emailAddressFormInput" type="email" th:field="*{emailAddress}"/>
+        </div>
         <br>
-        <input type="submit">
+        <button class="btn btn-default" type="submit">Submit</button>
     </form>
 
 </div>
