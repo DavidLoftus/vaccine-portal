@@ -1,10 +1,12 @@
 package howdo.vaccine.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -12,7 +14,8 @@ public class Appointment {
     @Id
     private Long id;
 
-    @NotBlank
+    @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private Date appointmentTime;
 
     @ManyToOne
