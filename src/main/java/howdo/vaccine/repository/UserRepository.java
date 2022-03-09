@@ -13,6 +13,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT COUNT(id) FROM User")
     int userTotal();
 
+    @Query("SELECT COUNT(id) FROM User WHERE doses.size = 0")
+    int zeroDosesTotal();
+
+    @Query("SELECT COUNT(id) FROM User WHERE doses.size = 1")
+    int oneDosesTotal();
+
+    @Query("SELECT COUNT(id) FROM User WHERE doses.size = 2")
+    int twoDosesTotal();
+
     /*
     @Query("select datediff(YY, dateOfBirth, getdate() ) from User")
     ArrayList<Integer> userAges();

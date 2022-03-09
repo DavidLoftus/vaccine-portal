@@ -1,8 +1,7 @@
 package howdo.vaccine.controller;
 
-import howdo.vaccine.repository.UserRepository;
-import howdo.vaccine.repository.VaccineDoseRepository;
-import howdo.vaccine.repository.VaccinationCentreRepository;
+import howdo.vaccine.model.Appointment;
+import howdo.vaccine.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,18 +26,34 @@ public class StatsController {
         return "home";
     }
 
+    @Autowired
+    ForumPostRepository forumPostRepository;
+
+    @Autowired
+    AppointmentRepository appointmentRepository;
+
     @RequestMapping({"/"})
     public String viewHomePage(Model model) {
         int userTotal = userRepository.userTotal();
         int doseTotal = vaccineDoseRepository.doseTotal();
         int vaccinatedPercentage = (vaccineDoseRepository.doseTotal()/5000000)*100;
         int vaccinationCentreTotal = vaccinationCentreRepository.vaccinationCentreTotal();
+        int forumPostTotal = forumPostRepository.forumPostTotal();
+        int appointmentTotal = appointmentRepository.appointmentTotal();
+        int zeroDosesTotal = userRepository.zeroDosesTotal();
+        int oneDosesTotal = userRepository.oneDosesTotal();
+        int twoDosesTotal = userRepository.twoDosesTotal();
         //ArrayList<Integer> ageList = userRepository.userAges();
 
         model.addAttribute("doseTotal", doseTotal);
         model.addAttribute("userTotal", userTotal);
         model.addAttribute("vaccinatedPercentage", vaccinatedPercentage);
         model.addAttribute("vaccinationCentreTotal", vaccinationCentreTotal);
+        model.addAttribute("forumPostTotal", forumPostTotal);
+        model.addAttribute("appointmentTotal", appointmentTotal);
+        model.addAttribute("zeroDosesTotal", zeroDosesTotal);
+        model.addAttribute("oneDosesTotal", oneDosesTotal);
+        model.addAttribute("twoDosesTotal", twoDosesTotal);
         return "stats";
     }
 

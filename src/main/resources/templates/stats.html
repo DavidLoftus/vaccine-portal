@@ -31,6 +31,14 @@
             <th>Number of Operating Vaccination Centres:</th>
             <th th:text="${vaccinationCentreTotal}"></th>
         </tr>
+        <tr>
+            <th>Number of booked appointments done online:</th>
+            <th th:text="${appointmentTotal}"></th>
+        </tr>
+        <tr>
+            <th>Number of forum Posts:</th>
+            <th th:text="${forumPostTotal}"></th>
+        </tr>
 
     </table>
 
@@ -64,17 +72,19 @@
     <script language="JavaScript">
         function drawChart() {
 
-            var userTotal = [[${userTotal}]];
-            var doseTotal = [[${doseTotal}]];
+            var zeroDosesTotal = [[${zeroDosesTotal}]];
+            var oneDosesTotal = [[${oneDosesTotal}]];
+            var twoDosesTotal = [[${twoDosesTotal}]];
 
             /* Define the chart to be drawn.*/
             var data = google.visualization.arrayToDataTable([
-                ['TEST', 'TEST'],
-                ['Registered Citizens', userTotal],
-                ['Vaccinated Citizens', doseTotal]
+                ['Number of doses given to each person', 'Number of People'],
+                ['Zero Doses', zeroDosesTotal],
+                ['One Dose', oneDosesTotal],
+                ['Two Doses', twoDosesTotal]
             ]);
             var options = {
-                title: 'TEST',
+                title: 'Number of Doses Given to Each Person',
                 isStacked: true
             };
             /* Instantiate and draw the chart.*/
