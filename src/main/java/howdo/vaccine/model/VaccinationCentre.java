@@ -1,6 +1,7 @@
 package howdo.vaccine.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import java.util.List;
 public class VaccinationCentre {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     @NotBlank

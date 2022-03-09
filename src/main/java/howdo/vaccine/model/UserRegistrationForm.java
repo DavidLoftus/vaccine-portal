@@ -2,23 +2,16 @@ package howdo.vaccine.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @ElementCollection
-    private Set<String> authorities;
+public class UserRegistrationForm {
+    @NotBlank
+    @Column(unique = true)
+    private String ppsNumber;
 
     @NotBlank
     private String password;
@@ -34,10 +27,6 @@ public class User {
     private Date dateOfBirth;
 
     @NotBlank
-    @Column(unique = true)
-    private String ppsNumber;
-
-    @NotBlank
     private String phoneNumber;
 
     @Email
@@ -46,30 +35,6 @@ public class User {
 
     @NotBlank
     private String nationality;
-
-    @OneToMany(mappedBy = "user")
-    @OrderBy("dose")
-    private List<VaccineDose> doses;
-
-    @OneToMany(mappedBy = "user")
-    @OrderBy("appointmentTime")
-    private List<Appointment> appointments;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Set<String> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<String> authorities) {
-        this.authorities = authorities;
-    }
 
     public String getPassword() {
         return password;
@@ -133,21 +98,5 @@ public class User {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
-    }
-
-    public List<VaccineDose> getDoses() {
-        return doses;
-    }
-
-    public void setDoses(List<VaccineDose> doses) {
-        this.doses = doses;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
     }
 }

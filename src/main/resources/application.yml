@@ -9,4 +9,7 @@ spring:
 
   jpa.hibernate.ddl-auto: update
 
+portal:
+  admin.password: password
+
 logging.level.root: debug
