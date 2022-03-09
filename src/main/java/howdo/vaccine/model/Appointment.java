@@ -1,5 +1,6 @@
 package howdo.vaccine.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -17,7 +18,7 @@ public class Appointment {
     @ManyToOne
     private VaccinationCentre location;
 
-    @ManyToOne
+    @ManyToOne(cascade= CascadeType.ALL)
     private User user;
 
     public Long getId() {
