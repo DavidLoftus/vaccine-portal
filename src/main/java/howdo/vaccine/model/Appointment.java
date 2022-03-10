@@ -1,5 +1,6 @@
 package howdo.vaccine.model;
 
+import org.hibernate.annotations.Cascade;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.CascadeType;
@@ -21,7 +22,7 @@ public class Appointment {
     @ManyToOne
     private VaccinationCentre location;
 
-    @ManyToOne(cascade= CascadeType.ALL)
+    @ManyToOne
     private User user;
 
     public Long getId() {

@@ -3,7 +3,7 @@
       xsi:schemaLocation="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Appointments</title>
+    <title>Edit Centre Appointments</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
     <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
 
@@ -17,9 +17,23 @@
         <div>
             <table>
                 <tr class="black-border" th:each="app : ${centre.getAppointments()}">
-                    <form method="post" th:action="@{/edit/${app.getId()}}">
+                    <form method="post" th:action="|@{ /edit/{id} (id=${app.getId()}) }|">
                         <td>
-                            <p th:text="|${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
+                            <p th:text="|Appointment for ${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
+                        </td>
+                        <td th:if="${app.getUser().getDoses().size() == 0}">
+                            <p>Select a Vaccine:</p>
+                        <!-- if this is their first dose-->
+                            <select name="type">
+                                <option>Pfizer</option>
+                                <option>Moderna</option>
+                                <option>Janssen</option>
+                            </select>
+                        </td>
+                        <td th:unless="${app.getUser().getDoses().size() == 0}">
+                            <!-- if this is not their first dose-->
+                            <p th:text="|Vaccine type: ${app.getUser().getDoses().get(0).getVaccineType()}|"></p>
+                            <input type="hidden" name="type" th:value="${app.getUser().getDoses().get(0).getVaccineType()}"/>
                         </td>
                         <td>
                             <!-- When this button is clicked convert the appointment to a new dose and if this is the first one book a second dose -->

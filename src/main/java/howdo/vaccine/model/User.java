@@ -53,7 +53,7 @@ public class User {
     @OrderBy("dose")
     private List<VaccineDose> doses;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     @OrderBy("appointmentTime")
     private List<Appointment> appointments;
 

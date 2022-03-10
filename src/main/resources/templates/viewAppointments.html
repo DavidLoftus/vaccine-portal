@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Your Appointments</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+</head>
+<body>
+<div>
+    <h3>Your Appointments</h3>
+</div>
+<div th:each="app : ${user.getAppointments()}">
+    <p th:text="|Appointment at ${app.getLocation().getName()} on ${app.getAppointmentTime()}|"></p>
+    <form method="post" th:action="|@{ /cancel/{id} (id=${app.getId()}) }|">
+        <input type="submit" value="Cancel Appointment"/>
+    </form>
+</div>
+</body>
+</html>
