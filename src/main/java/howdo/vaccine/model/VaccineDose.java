@@ -1,9 +1,6 @@
 package howdo.vaccine.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -12,7 +9,7 @@ public class VaccineDose {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade= CascadeType.ALL)
     private User user;
 
     private Date date;
