@@ -125,6 +125,22 @@ public class VaccineController {
         //delete the old appointment
         appointmentRepository.delete(app);
 
-        response.sendRedirect("/home");
+        response.sendRedirect("/");
+    }
+
+    @GetMapping("/viewAppts")
+    public String viewApptsGet(Model model) {
+        model.addAttribute("user", userService.getCurrentUser());
+        return "viewAppointments";
+    }
+
+
+    @PostMapping(value = "/cancel/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public void cancelApptPost(HttpServletResponse response, HttpServletRequest request,
+                         @PathVariable long id) throws IOException {
+        Appointment app = appointmentRepository.getOne(id);
+        appointmentRepository.delete(app);
+
+        response.sendRedirect("/viewAppts");
     }
 }
