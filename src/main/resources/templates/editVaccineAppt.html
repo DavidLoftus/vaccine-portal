@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Appointments</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+</head>
+<body>
+    <div th:each="centre : ${locations}">
+        <p th:text="|Appointments for ${centre.getName()}:|"></p>
+        <div>
+            <table>
+                <tr class="black-border" th:each="app : ${centre.getAppointments()}">
+                    <form method="post" th:action="@{/edit/${app.getId()}}">
+                        <td>
+                            <p th:text="|${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
+                        </td>
+                        <td>
+                            <!-- When this button is clicked convert the appointment to a new dose and if this is the first one book a second dose -->
+                            <input type="submit"/>
+                        </td>
+                    </form>
+                </tr>
+            </table>
+            <br>
+        </div>
+    </div>
+</body>
+</html>
