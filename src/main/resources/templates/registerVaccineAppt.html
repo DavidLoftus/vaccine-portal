@@ -29,7 +29,6 @@
             <select name="location"> <!-- th:field="*{location}"> -->
                 <!-- use th to iterate through the vaccination centres-->
                 <option th:each="centre : ${locations}" th:value="${centre.getId()}" th:text="${centre.getName()}"></option>
-                <option value="test">test</option>
             </select>
         </label>
         <br>
