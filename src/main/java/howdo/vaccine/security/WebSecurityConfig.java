@@ -31,11 +31,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public UserService userService() {
-        return new UserServiceImpl();
-    }
-
-    @Bean
     public PasswordEncoder passwordEncoder() {
         DelegatingPasswordEncoder delegatingPasswordEncoder =
                 (DelegatingPasswordEncoder) PasswordEncoderFactories

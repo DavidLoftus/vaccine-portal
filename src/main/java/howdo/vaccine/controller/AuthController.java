@@ -4,6 +4,7 @@ import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
 import howdo.vaccine.repository.UserRepository;
+import howdo.vaccine.service.ActivityTrackerService;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,9 +36,15 @@ public class AuthController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void registerPost(HttpServletResponse response, @Valid @ModelAttribute("user") UserRegistrationForm user) throws IOException {
-        userService.createUser(user.getPpsNumber(), user.getPassword(), user.getFirstName(), user.getLastName(),
-                user.getDateOfBirth(), user.getPhoneNumber(), user.getEmailAddress(), user.getNationality());
+    public void registerPost(HttpServletResponse response, @Valid @ModelAttribute("user") UserRegistrationForm form) throws IOException {
+        userService.createUser(form.getPpsNumber(),
+                form.getPassword(),
+                form.getFirstName(),
+                form.getLastName(),
+                form.getDateOfBirth(),
+                form.getPhoneNumber(),
+                form.getEmailAddress(),
+                form.getNationality());
     }
 
     @Value("${portal.admin.password}")
