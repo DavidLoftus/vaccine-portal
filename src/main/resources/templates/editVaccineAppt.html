@@ -14,7 +14,22 @@
                 <tr class="black-border" th:each="app : ${centre.getAppointments()}">
                     <form method="post" th:action="@{/edit/${app.getId()}}">
                         <td>
-                            <p th:text="|${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
+                            <p th:text="|Appointment for ${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
+                        </td>
+                        <td>
+                            <p>Select a Vaccine:</p>
+                        </td>
+                        <td th:if="${app.getUser().getDoses().size() == 0}">
+                        <!-- if this is their first dose-->
+                            <select name="type">
+                                <option>Pfizer</option>
+                                <option>Moderna</option>
+                                <option>Janssen</option>
+                            </select>
+                        </td>
+                        <td th:unless="${app.getUser().getDoses().size() == 0}">
+                            <!-- if this is not their first dose-->
+                            <p th:text="|Vaccine type: ${app.getUser().getDoses().get(0).getVaccineType()}|"></p>
                         </td>
                         <td>
                             <!-- When this button is clicked convert the appointment to a new dose and if this is the first one book a second dose -->
