@@ -71,6 +71,6 @@ public class VaccineController {
         appointment.setLocation(location);
         appointmentRepository.save(appointment);
 
-        response.sendRedirect("/home");
+        response.sendRedirect("/");
     }
 }

@@ -17,6 +17,12 @@ public class VaccinationCentre {
     @NotBlank
     private String name;
 
+    private String address;
+
+    private String county;
+
+    private String eircode;
+
     @OneToMany(mappedBy = "location")
     List<Appointment> appointments;
 
@@ -43,5 +49,29 @@ public class VaccinationCentre {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCounty() {
+        return county;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
+    }
+
+    public String getEircode() {
+        return eircode;
+    }
+
+    public void setEircode(String eircode) {
+        this.eircode = eircode;
     }
 }
