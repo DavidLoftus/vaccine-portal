@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,38 +39,52 @@ public class VaccineController {
     @Autowired
     UserService userService;
 
-    //add a new Appointment object and a list of VaccinationCentres to the model
+    //add a list of VaccinationCentres to the model
     @ModelAttribute
-    public void addAttributes(Model model)
-    {
+    public void addAttributes(Model model) {
         List<VaccinationCentre> locations = centreRepository.findAll();
-        model.addAttribute("appointment", new Appointment());
         model.addAttribute("locations", locations);
     }
 
     @GetMapping("/appointments")
-    public String registerGet(@ModelAttribute User user) {return "registerVaccineAppt";}
+    public String registerGet(@ModelAttribute Appointment appointment) {
+        return "registerVaccineAppt";
+    }
 
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
         //parse the data from the form
-        //String dateString = request.getParameter("date");           //date is in form yyyy-mm-dd
-        String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
         User user = userService.getCurrentUser();
-
-        //find the right VaccinationCentre
+        String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
         VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
+
         long id = appointmentRepository.findAll().size() + 1;
 
-        System.out.println("\n\n\n"+"TEST"+"\n\n\n");
-        System.out.println("\n\n\n"+request.getParameter("user")+"\n\n\n");
-
-        //the appointment object contains a date and a vaccination centre from the form
+        //the appointment object contains a date from the form
         appointment.setId(id);
         appointment.setUser(user);
         appointment.setLocation(location);
         appointmentRepository.save(appointment);
+
+        response.sendRedirect("/");
+    }
+
+    @GetMapping("/edit")
+    public String editGet(@ModelAttribute User user) {
+        return "editVaccineAppt";
+    }
+
+
+    @PostMapping(value = "/edit/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public void editPost(HttpServletResponse response, HttpServletRequest request,
+                         @PathVariable long appointmentId) throws IOException, ParseException {
+
+        //convert this appointment into a dose
+
+        //book a second appointment if this is the first one
+
+        //delete this appointment
 
         response.sendRedirect("/home");
     }
