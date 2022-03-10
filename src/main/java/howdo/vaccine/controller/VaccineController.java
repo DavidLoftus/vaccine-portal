@@ -8,6 +8,7 @@ import howdo.vaccine.repository.UserRepository;
 import howdo.vaccine.repository.VaccineAptRepository;
 import howdo.vaccine.repository.VaccineCentreRepository;
 import howdo.vaccine.repository.VaccineDoseRepository;
+import howdo.vaccine.service.ActivityTrackerService;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -46,25 +47,23 @@ public class VaccineController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    private ActivityTrackerService activityTrackerService;
+
     @ModelAttribute("page")
     public String getPage() {
         return "appointments";
     }
 
-    private void bookAppointment(User user, VaccinationCentre location, Date date)
-    {
-        //find the entry with the largest id and add one to it; prevents repeat ids without needing to update a static variable
-        //ternary operator prevents NPEs
-        long id = (appointmentRepository.findAll().size() != 0) ?
-                appointmentRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).get(0).getId() + 1
-                : 1;
+    private void bookAppointment(User user, VaccinationCentre location, Date date) {
         Appointment appointment = new Appointment();
 
-        appointment.setId(id);
         appointment.setUser(user);
         appointment.setLocation(location);
         appointment.setAppointmentTime(date);
-        appointmentRepository.save(appointment);
+        appointment = appointmentRepository.save(appointment);
+
+        activityTrackerService.userBookAppointment(user, appointment);
     }
 
     //add a list of VaccinationCentres to the model
@@ -106,15 +105,13 @@ public class VaccineController {
         Appointment app = appointmentRepository.getOne(id);
         VaccineDose dose = new VaccineDose();
 
-        long doseID = (doseRepository.findAll().size() != 0) ?
-                doseRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).get(0).getId() + 1 :
-                1;
-        dose.setId(doseID);
         dose.setDose(app.getUser().getDoses().isEmpty() ? 1 : 2);
         dose.setUser(app.getUser());
         dose.setDate(app.getAppointmentTime());
         dose.setVaccineType(request.getParameter("type"));
-        doseRepository.save(dose);
+        dose = doseRepository.save(dose);
+
+        activityTrackerService.userReceivedVaccine(app.getUser(), dose);
 
         //book a second appointment if this is the first one
         if (dose.getDose() == 1)
