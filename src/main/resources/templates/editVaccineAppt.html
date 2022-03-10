@@ -5,9 +5,14 @@
     <meta charset="UTF-8">
     <title>Edit Appointments</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+
 </head>
 <body>
-    <div th:each="centre : ${locations}">
+
+<div class="container">
+    <header class="row" th:insert="fragments/general :: header"></header>
+    <div class="row" th:each="centre : ${locations}">
         <p th:text="|Appointments for ${centre.getName()}:|"></p>
         <div>
             <table>
@@ -26,5 +31,6 @@
             <br>
         </div>
     </div>
+</div>
 </body>
 </html>

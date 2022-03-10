@@ -39,6 +39,11 @@ public class VaccineController {
     @Autowired
     UserService userService;
 
+    @ModelAttribute("page")
+    public String getPage() {
+        return "appointments";
+    }
+
     //add a list of VaccinationCentres to the model
     @ModelAttribute
     public void addAttributes(Model model) {

@@ -11,8 +11,8 @@
 </head>
 <body>
 
-<header th:insert="fragments/general :: header"></header>
-<div>
+<div class="container">
+    <header class="row" th:insert="fragments/general :: header"></header>
 
     <table>
         <thead>
@@ -23,7 +23,9 @@
         </thead>
         <tbody>
             <tr th:each="thread : ${threads}">
-                <td th:text="${thread.title}"></td>
+                <td><a th:href="@{'/forum/' + ${thread.id}}" th:text="${thread.title}">
+                    Title here
+                </a></td>
                 <td th:text="${thread.posts.get(0).dateCreated}"></td>
             </tr>
         </tbody>
