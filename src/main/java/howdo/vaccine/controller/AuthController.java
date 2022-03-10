@@ -1,5 +1,6 @@
 package howdo.vaccine.controller;
 
+import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
 import howdo.vaccine.repository.UserRepository;
@@ -29,12 +30,12 @@ public class AuthController {
     UserService userService;
 
     @GetMapping("/register")
-    public String registerGet(@ModelAttribute User user) {
+    public String registerGet(@ModelAttribute("user") UserRegistrationForm user) {
         return "register";
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void registerPost(HttpServletResponse response, @Valid @ModelAttribute UserRegistrationForm user) throws IOException {
+    public void registerPost(HttpServletResponse response, @Valid @ModelAttribute("user") UserRegistrationForm user) throws IOException {
         userService.createUser(user.getPpsNumber(), user.getPassword(), user.getFirstName(), user.getLastName(),
                 user.getDateOfBirth(), user.getPhoneNumber(), user.getEmailAddress(), user.getNationality());
     }
@@ -48,7 +49,7 @@ public class AuthController {
             userService.getUser("admin");
         } catch (UsernameNotFoundException e) {
             userService.createUser("admin", "password", "John", "Smith",
-                    new Date(), "0123456789", "admin@localhost", "Irish",
+                    new Date(), "0123456789", "admin@localhost", Nationality.IRISH,
                     Set.of("USER", "ADMIN"));
         }
     }
