@@ -1,7 +1,6 @@
-package howdo.vaccine.security;
+package howdo.vaccine.config;
 
-import howdo.vaccine.service.UserService;
-import howdo.vaccine.service.UserServiceImpl;
+import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

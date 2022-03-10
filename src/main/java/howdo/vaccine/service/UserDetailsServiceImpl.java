@@ -1,4 +1,4 @@
-package howdo.vaccine.security;
+package howdo.vaccine.service;
 
 import howdo.vaccine.model.User;
 import howdo.vaccine.repository.UserRepository;
