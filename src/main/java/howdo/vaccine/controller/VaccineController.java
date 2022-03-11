@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -64,17 +66,25 @@ public class VaccineController {
         String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
         VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
 
+        //check if the time slot is taken in this centre
+        if( appointmentService.isSlotTaken(appointment.getAppointmentTime() , location) )
+        {
+            //error message
+//            response.sendRedirect("/appointments");
+            response.sendRedirect("/edit");
+
+        }
         //prevent booking if the user is fully vaccinated
-        if (user.getDoses().size() > 1 || user.getAppointments().size() > 0)
+        else if (user.getDoses().size() > 1 || user.getAppointments().size() > 0)
         {
             response.sendRedirect("/appointments");
         }
         else {
             //otherwise book the appointment
             appointmentService.bookNewAppointment(user, appointment.getAppointmentTime(), location);
+            response.sendRedirect("/");
         }
 
-        response.sendRedirect("/appointments");
     }
 
     @GetMapping("/edit")

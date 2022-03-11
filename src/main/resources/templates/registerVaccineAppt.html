@@ -39,7 +39,15 @@
     <form method="post" th:action="@{/appointments}" th:object="${appointment}">
         <label>
             Select a Timeslot:
-            <input type="date" name="date" th:field="*{appointmentTime}"/>
+            <input type="datetime-local" name="date" step="900" th:field="*{appointmentTime}"/>
+            <!--
+            <select name="time">
+                <th:block th:each="i : ${#numbers.sequence(0,23)}">
+                    <option th:text="|${i}:00|"></option>
+                    <option th:text="|${i}:30|"></option>
+                </th:block>
+            </select>
+            -->
         </label>
         <br>
         <label>
