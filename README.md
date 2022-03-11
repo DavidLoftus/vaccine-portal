@@ -5,7 +5,7 @@ COMP47660-Secure Software Engineering Assignment 1 Report
 
 Killian Callaghan 18332783
 •	Implemented registered users can see their personal information and appointments.
-•	Implemented statistics.
+•	Implemented statistics and graphs.
 •	Improved the look and feel of the site.
 
 David Loftus 18329671
