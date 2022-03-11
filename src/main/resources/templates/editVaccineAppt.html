@@ -16,7 +16,7 @@
         <p th:text="|Appointments for ${centre.getName()}:|"></p>
             <table>
                 <tr class="black-border" th:each="app : ${centre.getAppointments()}">
-                    <form method="post" th:action="|@{ /edit/{id} (id=${app.getId()}) }|">
+                    <form method="post" th:action="|@{ /admin/edit/{id} (id=${app.getId()}) }|">
                         <td>
                             <p th:text="|Appointment for ${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
                         </td>

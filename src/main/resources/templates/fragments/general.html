@@ -26,7 +26,7 @@
       <a th:href="@{/activity}">Activity</a>
     </li>
     <li role="presentation" sec:authorize="hasAuthority('ADMIN')" th:attr="class=${page == 'admin' ? 'active' : null }">
-      <a th:href="@{/edit}">Admin</a>
+      <a th:href="@{/admin}">Admin</a>
     </li>
     <li style="float:right;" role="presentation" sec:authorize="isAuthenticated()" th:attr="class=${page == 'admin' ? 'active' : null }">
       <a th:href="@{/logout}">Logout</a>

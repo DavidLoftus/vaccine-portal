@@ -68,23 +68,6 @@ public class VaccineController {
         return viewApptsGet(model);
     }
 
-    @GetMapping("/edit")
-    public String editGet(Model model) {
-        model.addAttribute("page", "admin");
-        return "editVaccineAppt";
-    }
-
-
-    @PostMapping(value = "/edit/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void editPost(HttpServletResponse response, HttpServletRequest request,
-                         @PathVariable long id) throws IOException, ParseException {
-        Appointment appointment = appointmentService.getAppointment(id);
-
-        appointmentService.confirmAppointment(appointment, request.getParameter("type"));
-
-        response.sendRedirect("/");
-    }
-
     @GetMapping("/appointments")
     public String viewApptsGet(Model model) {
         model.addAttribute("user", userService.getCurrentUser());
