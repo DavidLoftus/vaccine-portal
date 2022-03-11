@@ -6,6 +6,10 @@
     <title>Edit Centre Appointments</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/css/style.css" th:href="@{/css/style.css}" />
     <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" href="../static/css/bootstrap.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.css}" href="../static/css/bootstrap-theme.css">
 
 </head>
 <body class="bodyClass">
@@ -15,38 +19,43 @@
 
     <header class="row" th:insert="fragments/general :: header"></header>
 
-    <div class="statsTable">
     <div class="row" th:each="centre : ${locations}" th:if="${!centre.getAppointments().isEmpty()}">
-        <p th:text="|Appointments for ${centre.getName()}:|"></p>
-            <table>
-                <tr class="black-border" th:each="app : ${centre.getAppointments()}">
-                    <form method="post" th:action="|@{ /admin/edit/{id} (id=${app.getId()}) }|">
+        <h3 class="page-header" th:text="|Appointments for ${centre.getName()}:|">Centre name</h3>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Vaccine Type</th>
+                <th>Dose</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+                <form class="form-horizontal" method="post" th:each="app : ${centre.getAppointments()}" th:action="|@{ /admin/edit/{id} (id=${app.getId()}) }|">
+                    <tr>
+                        <td th:text="|${app.getUser().getFirstName()} ${app.getUser().getLastName()}|">John Smith</td>
+
                         <td>
-                            <p th:text="|Appointment for ${app.getUser().getFirstName()} ${app.getUser().getLastName()}|"></p>
-                        </td>
-                        <td th:if="${app.getUser().getDoses().size() == 0}">
-                            <p>Select a Vaccine:</p>
-                        <!-- if this is their first dose-->
-                            <select name="type">
-                                <option>Pfizer</option>
-                                <option>Moderna</option>
-                                <option>Janssen</option>
+                            <label style="display: none" for="typeInput">Select a Vaccine:</label>
+                            <select id="typeInput" name="type">
+                                <option th:if="${app.getUser().getDoses().size() == 0}">Pfizer</option>
+                                <option th:if="${app.getUser().getDoses().size() == 0}">Moderna</option>
+                                <option th:if="${app.getUser().getDoses().size() == 0}">Janssen</option>
+                                <option th:unless="${app.getUser().getDoses().size() == 0}" th:value="${app.getUser().getDoses().get(0).getVaccineType()}" th:text="${app.getUser().getDoses().get(0).getVaccineType()}" >Janssen</option>
                             </select>
                         </td>
-                        <td th:unless="${app.getUser().getDoses().size() == 0}">
-                            <!-- if this is not their first dose-->
-                            <p th:text="|Vaccine type: ${app.getUser().getDoses().get(0).getVaccineType()}|"></p>
-                            <input type="hidden" name="type" th:value="${app.getUser().getDoses().get(0).getVaccineType()}"/>
+                        <td th:text="${app.getUser().getDoses().size()+1}">
+
                         </td>
-                        <td class="adminSubmitButton">
-                            <!-- When this button is clicked convert the appointment to a new dose and if this is the first one book a second dose -->
+                        <!-- When this button is clicked convert the appointment to a new dose and if this is the first one book a second dose -->
+                        <td>
                             <input type="submit"/>
                         </td>
-                    </form>
-                </tr>
-            </table>
-            <br>
-    </div>
+                    </tr>
+                </form>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

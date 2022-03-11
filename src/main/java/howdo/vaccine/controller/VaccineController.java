@@ -64,10 +64,10 @@ public class VaccineController {
     }
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String newAppointmentPost(Model model,
+    public String newAppointmentPost(HttpServletResponse response, Model model,
                                      @RequestParam("location") long locationId,
                                      @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                     @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time) {
+                                     @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time) throws IOException {
 
         //parse the data from the form
         User user = userService.getCurrentUser();
@@ -75,6 +75,7 @@ public class VaccineController {
 
         try {
             appointmentService.bookNewAppointment(user, date.atTime(time), location);
+            response.sendRedirect("/appointments");
         } catch (BookingUnavailable e) {
             model.addAttribute("error", e);
         }

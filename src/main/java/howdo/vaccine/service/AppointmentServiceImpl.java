@@ -28,6 +28,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.getOne(id);
     }
 
+    protected Appointment bookWithoutChecks(User user, LocalDateTime dateTime, VaccinationCentre centre) {
+        Appointment appointment = new Appointment();
+
+        appointment.setUser(user);
+        appointment.setLocation(centre);
+        appointment.setAppointmentTime(dateTime);
+        appointment = appointmentRepository.save(appointment);
+
+        activityTrackerService.userBookAppointment(user, appointment);
+
+        return appointment;
+    }
+
     @Override
     public Appointment bookNewAppointment(User user, LocalDateTime date, VaccinationCentre centre) throws BookingUnavailable {
         if (user.getDoses().size() >= 2) {
@@ -46,17 +59,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new BookingUnavailable("Time slot taken");
         }
 
-
-        Appointment appointment = new Appointment();
-
-        appointment.setUser(user);
-        appointment.setLocation(centre);
-        appointment.setAppointmentTime(date);
-        appointment = appointmentRepository.save(appointment);
-
-        activityTrackerService.userBookAppointment(user, appointment);
-
-        return appointment;
+        return bookWithoutChecks(user, date, centre);
     }
 
     private boolean isTimeValid(LocalDateTime date) {
@@ -71,7 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             times = getAvailableTimes(centre, date);
         }
 
-        return bookNewAppointment(user, date.atTime(times.get(0)), centre);
+        return bookWithoutChecks(user, date.atTime(times.get(0)), centre);
     }
 
     private Date localDateTimeToDateTime(LocalDateTime date) {
@@ -126,9 +129,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         activityTrackerService.userReceivedVaccine(user, dose);
 
-        //delete the old appointment
-        appointmentRepository.delete(appointment);
-
         //book a second appointment if this is the first one
         if (dose.getDose() == 1)
         {
@@ -140,6 +140,9 @@ public class AppointmentServiceImpl implements AppointmentService {
                 e.printStackTrace();
             }
         }
+
+        //delete the old appointment
+        appointmentRepository.delete(appointment);
     }
 
     @Override
