@@ -4,8 +4,9 @@ A mock vaccine registration portal for COMP47660 Module.
 ## Instructions
 
 1. Start a local mysql server, and ensure the config in application.yml is correct.
-2. To run the app run the command `.\gradlew bootRun`
-3. Once the app has initialized the database, you can run `python database_init/init.py` to populate the database with initial data. (note that this requires mysql-connector-python and requests package)
+2. Create database `vaccine` in this server.
+3. To run the app run the command `.\gradlew bootRun`
+4. Once the app has initialized the database, you can run `python database_init/init.py` to populate the database with initial data. (note that this requires mysql-connector-python and requests package)
 
 Killian Callaghan 18332783
 •	Implemented registered users can see their personal information and appointments.
