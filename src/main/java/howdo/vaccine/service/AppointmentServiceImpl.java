@@ -36,8 +36,8 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new BookingUnavailable("You are already fully vaccinated");
         }
 
-        if (!user.getAuthorities().isEmpty()) {
-            throw new BookingUnavailable("You are already fully vaccinated");
+        if (!user.getAppointments().isEmpty()) {
+            throw new BookingUnavailable("You already have an appointment booked");
         }
 
         Appointment appointment = new Appointment();
