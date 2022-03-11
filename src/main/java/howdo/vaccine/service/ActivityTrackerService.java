@@ -16,6 +16,7 @@ public interface ActivityTrackerService {
     void userLogout(User user);
     void userBookAppointment(User user, Appointment appointment);
     void userReceivedVaccine(User user, VaccineDose dose);
+    void userCancelledAppointment(User user, Appointment appointment);
 
     List<UserActivityEvent> getUserEvents(User user);
 }

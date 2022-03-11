@@ -1,9 +1,6 @@
 package howdo.vaccine.config;
 
-import howdo.vaccine.service.ActivityTrackerService;
-import howdo.vaccine.service.ActivityTrackerServiceImpl;
-import howdo.vaccine.service.UserService;
-import howdo.vaccine.service.UserServiceImpl;
+import howdo.vaccine.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,5 +15,10 @@ public class Config {
     @Bean
     public ActivityTrackerService activityTrackerService() {
         return new ActivityTrackerServiceImpl();
+    }
+
+    @Bean
+    public AppointmentService appointmentService() {
+        return new AppointmentServiceImpl();
     }
 }
