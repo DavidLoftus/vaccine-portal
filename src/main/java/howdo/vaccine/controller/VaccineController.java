@@ -75,21 +75,32 @@ public class VaccineController {
     }
 
     @GetMapping("/appointments")
-    public String registerGet(@ModelAttribute Appointment appointment) {
+    public String registerGet(@ModelAttribute Appointment appointment, Model model) {
+        model.addAttribute("user", userService.getCurrentUser());
         return "registerVaccineAppt";
     }
 
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
+    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment,
+                                 Model model) throws IOException, ParseException {
         //parse the data from the form
         User user = userService.getCurrentUser();
         String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
         VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
 
-        bookAppointment(user, location, appointment.getAppointmentTime());
+        //prevent booking if the user is fully vaccinated
+        if (user.getDoses().size() > 1 || user.getAppointments().size() > 0)
+        {
+            response.sendRedirect("/appointments");
+        }
+        else
+        {
+            //otherwise book the appointment
+            bookAppointment(user, location, appointment.getAppointmentTime());
 
-        response.sendRedirect("/");
+            response.sendRedirect("/");
+        }
     }
 
     @GetMapping("/edit")

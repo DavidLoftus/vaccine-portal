@@ -21,13 +21,21 @@
 
 
 <div>
+    <p th:if="${user.getDoses().size()}>1" >
+        <b>You cannot book new appointments; you are already fully vaccinated.</b>
+    </p>
+    <p th:if="${user.getAppointments().size()}>0" >
+        <b>You already have an appointment booked; you cannot book more than one appointment at once.</b>
+    </p>
+    <p>test</p>
+</div>
+<div>
 
     <!--
     Logged-in users can set an appointment to get a vaccine dose
     Users provide a time and a location for the appointment; that timeslot will be blocked as a result
     Distinguish between first and second dose appointments; second doses are booked automatically 21days after the User receives their first
     -->
-
     <form method="post" th:action="@{/appointments}" th:object="${appointment}">
         <label>
             Select a Timeslot:
@@ -45,6 +53,7 @@
         <input type="submit">
     </form>
 
+</div>
 </div>
 </body>
 </html>
