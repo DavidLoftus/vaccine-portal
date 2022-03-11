@@ -15,7 +15,7 @@ David Loftus 18329671
 •	Implemented that a registered user can login and logout from the system.
 •	Implemented registered users can see a record of their last activity.
 
-Joe Clark 18400934
+Joe Clarke 18400934
 •	Registered users can book a vaccination appointment.
 •	Implemented admin controls. The admin can update appointments for each centre.
 • Implementeddid the ability to view/cancel appointments.
