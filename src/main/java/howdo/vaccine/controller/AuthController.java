@@ -40,6 +40,8 @@ public class AuthController {
                 form.getPhoneNumber(),
                 form.getEmailAddress(),
                 form.getNationality());
+
+        response.sendRedirect("/");
     }
 
     @Value("${portal.admin.password}")
