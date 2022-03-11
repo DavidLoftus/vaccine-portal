@@ -52,38 +52,25 @@ public class VaccineController {
         model.addAttribute("locations", locations);
     }
 
-    @GetMapping("/appointments")
-    public String registerGet(@ModelAttribute Appointment appointment, Model model) {
-        model.addAttribute("user", userService.getCurrentUser());
-        return "registerVaccineAppt";
-    }
-
-
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
+    public void newAppointmentPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
         //parse the data from the form
         User user = userService.getCurrentUser();
         String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
         VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
 
         //check if the time slot is taken in this centre
-        if( appointmentService.isSlotTaken(appointment.getAppointmentTime() , location) )
-        {
+        if( appointmentService.isSlotTaken(appointment.getAppointmentTime() , location) ) {
             //error message
-//            response.sendRedirect("/appointments");
-            response.sendRedirect("/edit");
-
         }
         //prevent booking if the user is fully vaccinated
-        else if (user.getDoses().size() > 1 || user.getAppointments().size() > 0)
-        {
-            response.sendRedirect("/appointments");
+        else if (user.getDoses().size() > 1 || user.getAppointments().size() > 0) {
         }
         else {
             //otherwise book the appointment
             appointmentService.bookNewAppointment(user, appointment.getAppointmentTime(), location);
-            response.sendRedirect("/");
         }
+        response.sendRedirect("/appointments");
 
     }
 
@@ -104,7 +91,7 @@ public class VaccineController {
         response.sendRedirect("/");
     }
 
-    @GetMapping("/viewAppts")
+    @GetMapping("/appointments")
     public String viewApptsGet(Model model) {
         model.addAttribute("user", userService.getCurrentUser());
         return "viewAppointments";
@@ -117,6 +104,6 @@ public class VaccineController {
         Appointment appointment = appointmentService.getAppointment(id);
         appointmentService.cancelAppointment(appointment);
 
-        response.sendRedirect("/viewAppts");
+        response.sendRedirect("/appointments");
     }
 }

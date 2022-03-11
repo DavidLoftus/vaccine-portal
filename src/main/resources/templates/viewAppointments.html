@@ -6,19 +6,57 @@
     <title>Edit Your Appointments</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
     <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
 </head>
 <body>
 
-<header th:insert="fragments/general :: header"></header>
+<div class="container">
 
-<div>
-    <h3>Your Appointments</h3>
+    <header th:insert="fragments/general :: header"></header>
+
+    <h1 class="heading">Your Appointments</h1>
+
+    <div th:if="${!user.getAppointments().isEmpty()}" class="row">
+        <div class="panel panel-default" th:each="app : ${user.getAppointments()}">
+            <div class="panel-body">
+                <p th:text="|Appointment at ${app.getLocation().getName()} on ${app.getAppointmentTime()}|"></p>
+            </div>
+
+            <div class="panel-footer">
+                <form method="post" th:action="|@{ /cancel/{id} (id=${app.getId()}) }|">
+                    <button type="submit">Cancel Appointment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${user.getAppointments().isEmpty()}" class="row">
+        <form method="post" th:action="@{/appointments}" th:object="${appointment}">
+            <div class="form-group">
+                <label for="timeInput">
+                    Select a Timeslot:
+                </label>
+                <input type="datetime-local" id="timeInput" name="date" step="900" th:field="*{appointmentTime}"/>
+            </div>
+            <div>
+                <label for="locationInput">
+                    Select a Location:
+                </label>
+                <select class="form-control" id="locationInput" name="location"> <!-- th:field="*{location}"> -->
+                    <!-- use th to iterate through the vaccination centres-->
+                    <option th:each="centre : ${locations}" th:value="${centre.getId()}" th:text="${centre.getName()}"></option>
+                </select>
+            </div>
+            <input class="form-control" type="submit">
+        </form>
+    </div>
+
 </div>
-<div th:each="app : ${user.getAppointments()}">
-    <p th:text="|Appointment at ${app.getLocation().getName()} on ${app.getAppointmentTime()}|"></p>
-    <form method="post" th:action="|@{ /cancel/{id} (id=${app.getId()}) }|">
-        <input type="submit" value="Cancel Appointment"/>
-    </form>
-</div>
+
 </body>
 </html>

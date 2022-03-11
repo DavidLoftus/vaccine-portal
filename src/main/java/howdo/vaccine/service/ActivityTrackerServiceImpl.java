@@ -52,6 +52,11 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     }
 
     @Override
+    public void userCancelledAppointment(User user, Appointment appointment) {
+        addUserEvent(user, "Cancelled appointment");
+    }
+
+    @Override
     public List<UserActivityEvent> getUserEvents(User user) {
         return eventRepository.getByUser(user);
     }
