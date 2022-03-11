@@ -1,5 +1,6 @@
 package howdo.vaccine.model;
 
+import howdo.vaccine.enums.Nationality;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
@@ -15,6 +16,9 @@ public class UserRegistrationForm {
 
     @NotBlank
     private String password;
+
+    @NotBlank
+    private String passwordConfirm;
 
     @NotBlank
     private String firstName;
@@ -33,8 +37,8 @@ public class UserRegistrationForm {
     @NotBlank
     private String emailAddress;
 
-    @NotBlank
-    private String nationality;
+    @NotNull
+    private Nationality nationality;
 
     public String getPassword() {
         return password;
@@ -42,6 +46,14 @@ public class UserRegistrationForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
     public String getFirstName() {
@@ -92,11 +104,11 @@ public class UserRegistrationForm {
         this.emailAddress = emailAddress;
     }
 
-    public String getNationality() {
+    public Nationality getNationality() {
         return nationality;
     }
 
-    public void setNationality(String nationality) {
+    public void setNationality(Nationality nationality) {
         this.nationality = nationality;
     }
 }

@@ -1,9 +1,9 @@
 package howdo.vaccine.service;
 
+import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public User createUser(String ppsNumber, String password, String firstName, String lastName, Date dateOfBirth, String phoneNumber, String emailAddress, String nationality, Set<String> authorities) {
+    public User createUser(String ppsNumber, String password, String firstName, String lastName, Date dateOfBirth, String phoneNumber, String emailAddress, Nationality nationality, Set<String> authorities) {
         User user = new User();
         user.setPpsNumber(ppsNumber);
         user.setPassword(passwordEncoder.encode(password));

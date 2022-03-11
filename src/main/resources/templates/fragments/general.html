@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head th:fragment="headerfiles">
   <meta charset="UTF-8" />
   <link th:href="@{style.css}" href="../../static/style.css" rel="stylesheet">
@@ -14,13 +14,16 @@
 
   <ul class="nav nav-tabs">
     <li role="presentation" th:attr="class=${page == 'home' ? 'active' : null }">
-      <a href="/">Home</a>
+      <a th:href="@{/}">Home</a>
     </li>
-    <li role="presentation" th:attr="class=${page == 'profile' ? 'active' : null }">
-      <a href="#">Profile</a>
+    <li role="presentation" th:attr="class=${page == 'appointments' ? 'active' : null }">
+      <a th:href="@{/appointments}">Appointments</a>
     </li>
     <li role="presentation" th:attr="class=${page == 'forum' ? 'active' : null }">
       <a th:href="@{/forum}">Forum</a>
+    </li>
+    <li role="presentation" sec:authorize="hasAuthority('ADMIN')" th:attr="class=${page == 'admin' ? 'active' : null }">
+      <a th:href="@{/edit}">Admin</a>
     </li>
   </ul>
 </div>

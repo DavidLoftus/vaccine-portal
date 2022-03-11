@@ -1,5 +1,6 @@
 package howdo.vaccine.service;
 
+import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 
 import java.util.Collection;
@@ -14,7 +15,7 @@ public interface UserService {
                     Date dateOfBirth,
                     String phoneNumber,
                     String emailAddress,
-                    String nationality,
+                    Nationality nationality,
                     Set<String> authorities);
 
     default User createUser(String ppsNumber,
@@ -24,7 +25,7 @@ public interface UserService {
                     Date dateOfBirth,
                     String phoneNumber,
                     String emailAddress,
-                    String nationality) {
+                    Nationality nationality) {
         return this.createUser(ppsNumber, password, firstName, lastName, dateOfBirth, phoneNumber, emailAddress, nationality, Set.of("USER"));
     }
 

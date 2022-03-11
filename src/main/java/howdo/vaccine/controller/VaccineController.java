@@ -46,6 +46,11 @@ public class VaccineController {
     @Autowired
     UserService userService;
 
+    @ModelAttribute("page")
+    public String getPage() {
+        return "appointments";
+    }
+
     private void bookAppointment(User user, VaccinationCentre location, Date date)
     {
         //find the entry with the largest id and add one to it; prevents repeat ids without needing to update a static variable

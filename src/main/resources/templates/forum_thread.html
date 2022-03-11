@@ -7,10 +7,16 @@
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
     <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
 </head>
 <body>
 
-<header th:insert="fragments/general :: header"></header>
+<div class="container">
+    <header class="row" th:insert="fragments/general :: header">
+    </header>
     <b th:text="${thread.title}"></b>
 
     <div>
@@ -27,6 +33,7 @@
         </label>
         <input type="submit">
     </form>
+</div>
 
 </body>
 </html>

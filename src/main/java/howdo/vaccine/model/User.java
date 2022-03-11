@@ -1,5 +1,6 @@
 package howdo.vaccine.model;
 
+import howdo.vaccine.enums.Nationality;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -44,8 +45,9 @@ public class User {
     @NotBlank
     private String emailAddress;
 
-    @NotBlank
-    private String nationality;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Nationality nationality;
 
     @OneToMany(mappedBy = "user")
     @OrderBy("dose")
@@ -127,11 +129,11 @@ public class User {
         this.emailAddress = emailAddress;
     }
 
-    public String getNationality() {
+    public Nationality getNationality() {
         return nationality;
     }
 
-    public void setNationality(String nationality) {
+    public void setNationality(Nationality nationality) {
         this.nationality = nationality;
     }
 
