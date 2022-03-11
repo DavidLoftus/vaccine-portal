@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org" xmlns:c="">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Stats</title>
-    <link rel="stylesheet" type="text/css" media="all" href="../static/css/style.css" th:href="@{style.css}" />
+    <link rel="stylesheet" type="text/css" media="all" href="../static/css/style.css" th:href="@{/css/style.css}" />
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {
@@ -21,44 +20,66 @@
 <body>
     <div class="container">
         <header class="row" th:insert="fragments/general :: header"></header>
-        <table class="statsTable">
 
+        <div sec:authorize="isAuthenticated()" class="row">
+            <div class="col-sm-6">
+                <h3 class="page-header">User Information</h3>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name: </th>
+                        <th th:text="${fullName}"></th>
+                    </tr>
+                    <tr>
+                        <th>PPS Number: </th>
+                        <th th:text="${currentUser.ppsNumber}"></th>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth: </th>
+                        <th th:text="${#dates.format(currentUser.dateOfBirth, 'yyyy-MM-dd')}"></th>
+                    </tr>
+                    <tr>
+                        <th>Phone Number: </th>
+                        <th th:text="${currentUser.phoneNumber}"></th>
+                    </tr>
+                    <tr>
+                        <th>Email Address: </th>
+                        <th th:text="${currentUser.emailAddress}"></th>
+                    </tr>
+                    <tr>
+                        <th>Nationality: </th>
+                        <th th:text="${currentUser.nationality.getDisplayName()}"></th>
+                    </tr>
+                </table>
+            </div>
 
-            <tr><th><h1>User Information</h1></th></tr>
-            <tr>
-                <th>Name: </th><th th:text="${fullName}"></th>
-            </tr>
-            <tr>
-                <th>PPS Number: </th><th th:text="${currentUser.ppsNumber}"></th>
-            </tr>
-            <tr>
-                <th>Date of Birth: </th><th th:text="${#dates.format(currentUser.dateOfBirth, 'yyyy-MM-dd')}"></th>
-            </tr>
-            <tr>
-                <th>Phone Number: </th><th th:text="${currentUser.phoneNumber}"></th>
-            </tr>
-            <tr>
-                <th>Email Address: </th><th th:text="${currentUser.emailAddress}"></th>
-            </tr>
-            <tr>
-                <th>Nationality: </th><th th:text="${currentUser.nationality.getDisplayName()}"></th>
-            </tr>
+            <div class="col-sm-6">
+                <h3 class="page-header">Appointment Information</h3>
 
-            <tr></tr><tr><th><h1>Appointment Information</h1></th></tr>
+                <div th:if="${!user.getAppointments().isEmpty()}" class="row">
+                    <div class="panel panel-default" th:each="app : ${user.getAppointments()}">
+                        <div class="panel-body">
+                            <p th:text="|Appointment at ${app.getLocation().getName()} on ${app.getAppointmentTime()}|"></p>
+                        </div>
+                    </div>
+                </div>
 
-                <tr th:each="appointment : ${appointments}">
-                    <td th:text="${appointment.location.name}"></td>
-                    <td th:text="${appointment.appointmentTime}"></td>
+                <h3 class="page-header">Appointment Information</h3>
 
-                </tr>
+                <table class="table table-bordered">
+                    <thead>
+                        <th>Vaccine Type</th>
+                        <th>Date</th>
+                    </thead>
+                    <tbody>
+                        <tr th:each="userDose : ${userDoses}">
+                            <td th:text="${userDose.vaccineType}"></td>
+                            <td th:text="${userDose.date}"></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            <tr></tr><tr><th><h1>Vaccine Dose Information</h1></th></tr>
-
-            <tr th:each="userDose : ${userDoses}">
-                <td th:text="${userDose.vaccineType}"></td>
-                <td th:text="${userDose.date}"></td>
-
-            </tr>
+            </div>
+        </div>
 
 
 
@@ -97,7 +118,7 @@
         </table>
 
         <div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
-        <script language="JavaScript">
+        <script>
             function drawChart() {
 
                 var userTotal = [[${userTotal}]];
@@ -123,7 +144,7 @@
 
 
         <div id="container2" style="width: 550px; height: 400px; margin: 0 auto"></div>
-        <script language="JavaScript">
+        <script>
             function drawChart() {
 
                 var zeroDosesTotal = [[${zeroDosesTotal}]];
