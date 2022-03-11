@@ -7,6 +7,7 @@ import howdo.vaccine.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,14 +35,14 @@ public class AdminController {
         return centreRepository.findAll();
     }
 
-    @Secured({"ADMIN"})
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/admin")
     public String editGet(Model model) {
         model.addAttribute("page", "admin");
         return "editVaccineAppt";
     }
 
-    @Secured({"ADMIN"})
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(value = "/admin/edit/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void editPost(HttpServletResponse response, HttpServletRequest request,
                          @PathVariable long id) throws IOException {
