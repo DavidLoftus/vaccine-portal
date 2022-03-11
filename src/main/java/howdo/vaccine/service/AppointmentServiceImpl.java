@@ -4,7 +4,8 @@ import howdo.vaccine.model.Appointment;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.VaccinationCentre;
 import howdo.vaccine.model.VaccineDose;
-import howdo.vaccine.repository.*;
+import howdo.vaccine.repository.VaccineAptRepository;
+import howdo.vaccine.repository.VaccineDoseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;

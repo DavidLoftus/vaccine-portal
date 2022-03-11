@@ -3,16 +3,11 @@ package howdo.vaccine.controller;
 import howdo.vaccine.model.Appointment;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.VaccinationCentre;
-import howdo.vaccine.model.VaccineDose;
-import howdo.vaccine.repository.UserRepository;
-import howdo.vaccine.repository.VaccineAptRepository;
 import howdo.vaccine.repository.VaccineCentreRepository;
-import howdo.vaccine.repository.VaccineDoseRepository;
 import howdo.vaccine.service.ActivityTrackerService;
 import howdo.vaccine.service.AppointmentService;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,9 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.*;
-import java.util.Calendar;
-import java.util.Date;
+import java.text.ParseException;
 import java.util.List;
 
 @Controller

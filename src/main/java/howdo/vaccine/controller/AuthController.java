@@ -1,17 +1,12 @@
 package howdo.vaccine.controller;
 
 import howdo.vaccine.enums.Nationality;
-import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
-import howdo.vaccine.repository.UserRepository;
-import howdo.vaccine.service.ActivityTrackerService;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
