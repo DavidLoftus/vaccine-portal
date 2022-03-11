@@ -76,9 +76,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public boolean isSlotTaken(Date date)
+    public boolean isSlotTaken(Date date, VaccinationCentre location)
     {
-        //if the list is empty the slot is not taken
-        return !appointmentRepository.findByAppointmentTime(date).isEmpty();
+        //if the lists are empty the slot is not taken at that time and place
+        return !appointmentRepository.findByAppointmentTime(date).isEmpty() &&
+                !appointmentRepository.findByLocation(location).isEmpty();
     }
 }

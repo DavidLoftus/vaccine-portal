@@ -16,5 +16,5 @@ public interface AppointmentService {
 
     void confirmAppointment(Appointment appointment, String vaccineType);
 
-    boolean isSlotTaken(Date date);
+    boolean isSlotTaken(Date date, VaccinationCentre location);
 }
