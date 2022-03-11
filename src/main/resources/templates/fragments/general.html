@@ -28,6 +28,16 @@
     <li role="presentation" sec:authorize="hasAuthority('ADMIN')" th:attr="class=${page == 'admin' ? 'active' : null }">
       <a th:href="@{/edit}">Admin</a>
     </li>
+    <li style="float:right;" role="presentation" sec:authorize="isAuthenticated()" th:attr="class=${page == 'admin' ? 'active' : null }">
+      <a th:href="@{/logout}">Logout</a>
+    </li>
+
+    <li style="float:right;" role="presentation" sec:authorize="isAnonymous()" th:attr="class=${page == 'admin' ? 'active' : null }">
+      <a th:href="@{/register}">Register</a>
+    </li>
+    <li style="float:right;" role="presentation" sec:authorize="isAnonymous()" th:attr="class=${page == 'admin' ? 'active' : null }">
+      <a th:href="@{/login}">Login</a>
+    </li>
   </ul>
 </div>
 </body>
