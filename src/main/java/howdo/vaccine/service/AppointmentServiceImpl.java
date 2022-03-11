@@ -74,4 +74,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         //delete the old appointment
         appointmentRepository.delete(appointment);
     }
+
+    @Override
+    public boolean isSlotTaken(Date date)
+    {
+        //if the list is empty the slot is not taken
+        return !appointmentRepository.findByDate(date).isEmpty();
+    }
 }
