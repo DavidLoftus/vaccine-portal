@@ -12,6 +12,37 @@
     <!-- Optional theme -->
     <link rel="stylesheet" th:href="@{/css/bootstrap-theme.css}" href="../static/css/bootstrap-theme.css">
 
+    <script>
+
+        async function getTimes() {
+            const locationInput = document.getElementById("locationInput");
+            const dateInput = document.getElementById("dateInput");
+
+            if (locationInput.value === "" || dateInput.value === "") return;
+
+            const query = "/appointments/times?" + new URLSearchParams({
+                "location": locationInput.value,
+                "date": dateInput.value,
+            });
+
+            const response = await fetch(query, {
+                "credentials": "include",
+                "headers": {
+                    "Accept": "text/html",
+                },
+                "referrer": "http://localhost:8080/login",
+                "method": "GET",
+                "mode": "cors"
+            });
+
+            const html = await response.text();
+            const timesContainer = document.getElementById("timesContainer");
+
+            timesContainer.innerHTML = html;
+        }
+
+    </script>
+
 </head>
 <body>
 
@@ -42,24 +73,25 @@
     <div th:if="${user.getAppointments().isEmpty()}" class="row">
         <form method="post" th:action="@{/appointments}" th:object="${appointment}">
             <div class="form-group">
-                <label for="timeInput">
+                <label for="dateInput">
                     Select a Timeslot:
                 </label>
-                <input type="datetime-local" id="timeInput" name="date" step="900" th:field="*{appointmentTime}"/>
+                <input onchange="getTimes()" type="date" id="dateInput" name="date"/>
             </div>
             <div>
                 <label for="locationInput">
                     Select a Location:
                 </label>
-                <select class="form-control" id="locationInput" name="location"> <!-- th:field="*{location}"> -->
+                <select onchange="getTimes()" class="form-control" id="locationInput" name="location"> <!-- th:field="*{location}"> -->
                     <!-- use th to iterate through the vaccination centres-->
                     <option th:each="centre : ${locations}" th:value="${centre.getId()}" th:text="${centre.getName()}"></option>
                 </select>
             </div>
-            <input class="form-control" type="submit">
+            <div id="timesContainer">
+
+            </div>
         </form>
     </div>
-
 </div>
 
 </body>

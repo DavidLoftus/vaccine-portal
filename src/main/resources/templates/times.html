@@ -1,0 +1,12 @@
+<div class="form-group">
+    <label for="timeInput">
+        Time slot:
+    </label>
+    <select class="form-control" name="time" id="timeInput">
+        <option th:each="time : ${times}" th:value="${time}" th:text="${time}">
+
+        </option>
+    </select>
+</div>
+
+<button type="submit">Book</button>

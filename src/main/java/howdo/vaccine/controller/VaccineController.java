@@ -9,19 +9,20 @@ import howdo.vaccine.service.AppointmentService;
 import howdo.vaccine.service.BookingUnavailable;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +46,6 @@ public class VaccineController {
         return "appointments";
     }
 
-
     //add a list of VaccinationCentres to the model
     @ModelAttribute
     public void addAttributes(Model model) {
@@ -53,15 +53,28 @@ public class VaccineController {
         model.addAttribute("locations", locations);
     }
 
+    @GetMapping("/appointments/times")
+    public String getAvailableTimes(Model model,
+                                    @RequestParam("location") long locationId,
+                                    @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        VaccinationCentre vaccinationCentre = centreRepository.getOne(locationId);
+        model.addAttribute("times", appointmentService.getAvailableTimes(vaccinationCentre, date));
+
+        return "times";
+    }
+
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String newAppointmentPost(Model model, HttpServletResponse response, HttpServletRequest request, @ModelAttribute Appointment appointment) throws IOException, ParseException {
+    public String newAppointmentPost(Model model,
+                                     @RequestParam("location") long locationId,
+                                     @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                     @RequestParam("time") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime time) {
+
         //parse the data from the form
         User user = userService.getCurrentUser();
-        String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
-        VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
+        VaccinationCentre location = centreRepository.getOne(locationId);
 
         try {
-            appointmentService.bookNewAppointment(user, appointment.getAppointmentTime(), location);
+            appointmentService.bookNewAppointment(user, date.atTime(time), location);
         } catch (BookingUnavailable e) {
             model.addAttribute("error", e);
         }

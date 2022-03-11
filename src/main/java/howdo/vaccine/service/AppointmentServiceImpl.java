@@ -6,10 +6,12 @@ import howdo.vaccine.model.VaccinationCentre;
 import howdo.vaccine.model.VaccineDose;
 import howdo.vaccine.repository.VaccineAptRepository;
 import howdo.vaccine.repository.VaccineDoseRepository;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppointmentServiceImpl implements AppointmentService {
     @Autowired
@@ -27,11 +29,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment bookNewAppointment(User user, Date date, VaccinationCentre centre) throws BookingUnavailable {
-        if (isSlotTaken(date, centre)) {
-            throw new BookingUnavailable("Time slot taken");
-        }
-
+    public Appointment bookNewAppointment(User user, LocalDateTime date, VaccinationCentre centre) throws BookingUnavailable {
         if (user.getDoses().size() >= 2) {
             throw new BookingUnavailable("You are already fully vaccinated");
         }
@@ -39,6 +37,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (!user.getAppointments().isEmpty()) {
             throw new BookingUnavailable("You already have an appointment booked");
         }
+
+        if (!isTimeValid(date)) {
+            throw new BookingUnavailable("Invalid time " + date);
+        }
+
+        if (isSlotTaken(date, centre)) {
+            throw new BookingUnavailable("Time slot taken");
+        }
+
 
         Appointment appointment = new Appointment();
 
@@ -50,6 +57,53 @@ public class AppointmentServiceImpl implements AppointmentService {
         activityTrackerService.userBookAppointment(user, appointment);
 
         return appointment;
+    }
+
+    private boolean isTimeValid(LocalDateTime date) {
+        return date.toLocalTime().getMinute() % 15 == 0 && LocalDateTime.now().isBefore(date);
+    }
+
+    @Override
+    public Appointment autobookNewAppointment(User user, LocalDate date, VaccinationCentre centre) throws BookingUnavailable {
+        List<LocalTime> times = getAvailableTimes(centre, date);
+        while (times.isEmpty()) {
+            date = date.plusDays(1);
+            times = getAvailableTimes(centre, date);
+        }
+
+        return bookNewAppointment(user, date.atTime(times.get(0)), centre);
+    }
+
+    private Date localDateTimeToDateTime(LocalDateTime date) {
+        return Date.from(Instant.from(date.atZone(ZoneId.systemDefault())));
+    }
+
+    @Override
+    public List<LocalTime> getAvailableTimes(VaccinationCentre centre, LocalDate day) {
+        List<Appointment> bookedAppointments = appointmentRepository.findAppointmentsOnDay(
+                centre,
+                day.atStartOfDay(),
+                day.plusDays(1).atStartOfDay()
+        );
+
+        Set<LocalTime> booked = bookedAppointments
+                .stream()
+                .map(Appointment::getAppointmentTime)
+                .map(LocalDateTime::toLocalTime)
+                .collect(Collectors.toSet());
+
+        List<LocalTime> available = new ArrayList<>();
+
+        final LocalTime openingTime = LocalTime.of(9, 0);
+        final LocalTime closingTime = LocalTime.of(18, 0);
+
+        for (LocalTime t = LocalTime.from(openingTime); t.isBefore(closingTime); t = t.plusMinutes(15)) {
+            if (!booked.contains(t)) {
+                available.add(t);
+            }
+        }
+
+        return available;
     }
 
     @Override
@@ -66,7 +120,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         dose.setUser(user);
         dose.setDose(user.getDoses().isEmpty() ? 1 : 2);
-        dose.setDate(appointment.getAppointmentTime());
+        dose.setDate(localDateTimeToDateTime(appointment.getAppointmentTime()));
         dose.setVaccineType(vaccineType);
         dose = doseRepository.save(dose);
 
@@ -78,13 +132,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         //book a second appointment if this is the first one
         if (dose.getDose() == 1)
         {
-            //book it three weeks later
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(appointment.getAppointmentTime());
-            calendar.add(Calendar.DAY_OF_YEAR, 21);
+            LocalDate threeWeeksLater = appointment.getAppointmentTime().toLocalDate().plusDays(21);
 
             try {
-                bookNewAppointment(user, calendar.getTime(), appointment.getLocation());
+                autobookNewAppointment(user, threeWeeksLater, appointment.getLocation());
             } catch (BookingUnavailable e) {
                 e.printStackTrace();
             }
@@ -92,10 +143,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public boolean isSlotTaken(Date date, VaccinationCentre location)
-    {
-        //if the lists are empty the slot is not taken at that time and place
-        return !appointmentRepository.findByAppointmentTime(date).isEmpty() &&
-                !appointmentRepository.findByLocation(location).isEmpty();
+    public boolean isSlotTaken(LocalDateTime date, VaccinationCentre location) {
+        return !getAvailableTimes(location, date.toLocalDate()).contains(date.toLocalTime());
     }
 }

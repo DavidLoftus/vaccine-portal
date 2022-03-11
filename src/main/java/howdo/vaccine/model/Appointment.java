@@ -7,7 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class Appointment {
@@ -17,7 +17,7 @@ public class Appointment {
 
     @NotNull
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm", iso = DateTimeFormat.ISO.DATE)
-    private Date appointmentTime;
+    private LocalDateTime appointmentTime;
 
     @ManyToOne
     private VaccinationCentre location;
@@ -33,11 +33,11 @@ public class Appointment {
         this.id = id;
     }
 
-    public Date getAppointmentTime() {
+    public LocalDateTime getAppointmentTime() {
         return appointmentTime;
     }
 
-    public void setAppointmentTime(Date appointmentTime) {
+    public void setAppointmentTime(LocalDateTime appointmentTime) {
         this.appointmentTime = appointmentTime;
     }
 
