@@ -68,7 +68,7 @@ public class HomeController {
 
         User currentUser = userService.getCurrentUser();
         if (currentUser != null) {
-            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("user", currentUser);
 
             String firstName = currentUser.getFirstName();
             String lastName = currentUser.getLastName();

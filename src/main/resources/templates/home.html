@@ -31,23 +31,23 @@
                     </tr>
                     <tr>
                         <th>PPS Number: </th>
-                        <th th:text="${currentUser.ppsNumber}"></th>
+                        <th th:text="${user.ppsNumber}"></th>
                     </tr>
                     <tr>
                         <th>Date of Birth: </th>
-                        <th th:text="${#dates.format(currentUser.dateOfBirth, 'yyyy-MM-dd')}"></th>
+                        <th th:text="${#dates.format(user.dateOfBirth, 'yyyy-MM-dd')}"></th>
                     </tr>
                     <tr>
                         <th>Phone Number: </th>
-                        <th th:text="${currentUser.phoneNumber}"></th>
+                        <th th:text="${user.phoneNumber}"></th>
                     </tr>
                     <tr>
                         <th>Email Address: </th>
-                        <th th:text="${currentUser.emailAddress}"></th>
+                        <th th:text="${user.emailAddress}"></th>
                     </tr>
                     <tr>
                         <th>Nationality: </th>
-                        <th th:text="${currentUser.nationality.getDisplayName()}"></th>
+                        <th th:text="${user.nationality.getDisplayName()}"></th>
                     </tr>
                 </table>
             </div>
