@@ -29,19 +29,19 @@
                 <th>Name: </th><th th:text="${fullName}"></th>
             </tr>
             <tr>
-                <th>PPS Number: </th><th th:text="${PPS}"></th>
+                <th>PPS Number: </th><th th:text="${currentUser.ppsNumber}"></th>
             </tr>
             <tr>
-                <th>Date of Birth: </th><th th:text="${birthDate}"></th>
+                <th>Date of Birth: </th><th th:text="${#dates.format(currentUser.dateOfBirth, 'yyyy-MM-dd')}"></th>
             </tr>
             <tr>
-                <th>Phone Number: </th><th th:text="${phoneNumber}"></th>
+                <th>Phone Number: </th><th th:text="${currentUser.phoneNumber}"></th>
             </tr>
             <tr>
-                <th>Email Address: </th><th th:text="${email}"></th>
+                <th>Email Address: </th><th th:text="${currentUser.emailAddress}"></th>
             </tr>
             <tr>
-                <th>Nationality: </th><th th:text="${nationality}"></th>
+                <th>Nationality: </th><th th:text="${currentUser.nationality.getDisplayName()}"></th>
             </tr>
 
             <tr></tr><tr><th><h1>Appointment Information</h1></th></tr>
@@ -69,8 +69,14 @@
             </tr>
             <tr>
                 <th>Number of vaccinated citizens:</th>
-                <th th:text="${doseTotal}"></th>
+                <th th:text="${vaccinatedCitizens}"></th>
             </tr>
+
+            <tr>
+                <th>Total Number of doses administered:</th>
+                <th th:text="${totalDoses}"></th>
+            </tr>
+
             <tr>
                 <th>Percentage of Ireland's population that are vaccinated:</th>
                 <th th:text="|${vaccinatedPercentage}%|"></th>
@@ -95,13 +101,13 @@
             function drawChart() {
 
                 var userTotal = [[${userTotal}]];
-                var doseTotal = [[${doseTotal}]];
+                var vaccinatedCitizens = [[${vaccinatedCitizens}]];
 
                 /* Define the chart to be drawn.*/
                 var data = google.visualization.arrayToDataTable([
                     ['Number of Registered Citizens versus Number of Vaccinated Citizens', 'Number of People'],
                     ['Registered Citizens', userTotal],
-                    ['Vaccinated Citizens', doseTotal]
+                    ['Vaccinated Citizens', vaccinatedCitizens]
                 ]);
                 var options = {
                     title: 'Number of Registered Citizens versus Number of Vaccinated Citizens',

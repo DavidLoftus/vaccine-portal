@@ -11,7 +11,11 @@
 <body class="bodyClass">
 
 <div class="container">
+
+
     <header class="row" th:insert="fragments/general :: header"></header>
+
+    <div class="statsTable">
     <div class="row" th:each="centre : ${locations}" th:if="${!centre.getAppointments().isEmpty()}">
         <p th:text="|Appointments for ${centre.getName()}:|"></p>
             <table>
@@ -34,7 +38,7 @@
                             <p th:text="|Vaccine type: ${app.getUser().getDoses().get(0).getVaccineType()}|"></p>
                             <input type="hidden" name="type" th:value="${app.getUser().getDoses().get(0).getVaccineType()}"/>
                         </td>
-                        <td>
+                        <td class="adminSubmitButton">
                             <!-- When this button is clicked convert the appointment to a new dose and if this is the first one book a second dose -->
                             <input type="submit"/>
                         </td>
@@ -42,7 +46,7 @@
                 </tr>
             </table>
             <br>
-        </div>
+    </div>
     </div>
 </div>
 </body>

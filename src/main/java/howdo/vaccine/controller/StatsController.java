@@ -46,7 +46,8 @@ public class StatsController {
     @RequestMapping({"/"})
     public String viewHomePage(Model model) {
         int userTotal = userRepository.userTotal();
-        int doseTotal = vaccineDoseRepository.doseTotal();
+        int vaccinatedCitizens = userRepository.vaccinatedCitizens();
+        int totalDoses = vaccineDoseRepository.doseTotal();
         int vaccinatedPercentage = (vaccineDoseRepository.doseTotal()/5000000)*100;
         int vaccinationCentreTotal = vaccinationCentreRepository.vaccinationCentreTotal();
         int forumPostTotal = forumPostRepository.forumPostTotal();
@@ -55,8 +56,9 @@ public class StatsController {
         int oneDosesTotal = userRepository.oneDosesTotal();
         int twoDosesTotal = userRepository.twoDosesTotal();
 
-        model.addAttribute("doseTotal", doseTotal);
+        model.addAttribute("vaccinatedCitizens", vaccinatedCitizens);
         model.addAttribute("userTotal", userTotal);
+        model.addAttribute("totalDoses", totalDoses);
         model.addAttribute("vaccinatedPercentage", vaccinatedPercentage);
         model.addAttribute("vaccinationCentreTotal", vaccinationCentreTotal);
         model.addAttribute("forumPostTotal", forumPostTotal);
@@ -67,27 +69,15 @@ public class StatsController {
 
 
         User currentUser = userService.getCurrentUser();
-        Long ID = currentUser.getId();
-        String firstName = userRepository.getUserFirstName(ID);
-        String lastName = userRepository.getUserLastName(ID);
-        String fullName = firstName + " " + lastName;
-        String PPS = userRepository.getPpsNumber(ID);
-        String birthDate = userRepository.getDateOfBirth(ID);
+        model.addAttribute("currentUser", currentUser);
 
-        String phoneNumber = userRepository.getPhoneNumber(ID);
-        String email = userRepository.getEmailAddress(ID);
-        String nationality = userRepository.getNationality(ID);
+        String firstName = currentUser.getFirstName();
+        String lastName = currentUser.getLastName();
+        String fullName = firstName + " " + lastName;
+        model.addAttribute("fullName", fullName);
 
         List<Appointment> appointments = currentUser.getAppointments();
         List<VaccineDose> userDoses = currentUser.getDoses();
-
-        model.addAttribute("fullName", fullName);
-        model.addAttribute("PPS", PPS);
-        model.addAttribute("birthDate", birthDate);
-
-        model.addAttribute("phoneNumber", phoneNumber);
-        model.addAttribute("email", email);
-        model.addAttribute("nationality", nationality);
         model.addAttribute("appointments", appointments);
         model.addAttribute("userDoses", userDoses);
 
