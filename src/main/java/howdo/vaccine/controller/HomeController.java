@@ -12,12 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
-public class StatsController {
+public class HomeController {
 
     @Autowired
     UserRepository userRepository;
@@ -69,20 +67,21 @@ public class StatsController {
 
 
         User currentUser = userService.getCurrentUser();
-        model.addAttribute("currentUser", currentUser);
+        if (currentUser != null) {
+            model.addAttribute("currentUser", currentUser);
 
-        String firstName = currentUser.getFirstName();
-        String lastName = currentUser.getLastName();
-        String fullName = firstName + " " + lastName;
-        model.addAttribute("fullName", fullName);
+            String firstName = currentUser.getFirstName();
+            String lastName = currentUser.getLastName();
+            String fullName = firstName + " " + lastName;
+            model.addAttribute("fullName", fullName);
 
-        List<Appointment> appointments = currentUser.getAppointments();
-        List<VaccineDose> userDoses = currentUser.getDoses();
-        model.addAttribute("appointments", appointments);
-        model.addAttribute("userDoses", userDoses);
+            List<Appointment> appointments = currentUser.getAppointments();
+            List<VaccineDose> userDoses = currentUser.getDoses();
+            model.addAttribute("appointments", appointments);
+            model.addAttribute("userDoses", userDoses);
+        }
 
-
-        return "stats";
+        return "home";
     }
 
 
