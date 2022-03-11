@@ -6,6 +6,7 @@ import howdo.vaccine.model.VaccinationCentre;
 import howdo.vaccine.repository.VaccineCentreRepository;
 import howdo.vaccine.service.ActivityTrackerService;
 import howdo.vaccine.service.AppointmentService;
+import howdo.vaccine.service.BookingUnavailable;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -53,25 +54,18 @@ public class VaccineController {
     }
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void newAppointmentPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
+    public String newAppointmentPost(Model model, HttpServletResponse response, HttpServletRequest request, @ModelAttribute Appointment appointment) throws IOException, ParseException {
         //parse the data from the form
         User user = userService.getCurrentUser();
         String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
         VaccinationCentre location = centreRepository.getOne(Long.parseLong(locationString));
 
-        //check if the time slot is taken in this centre
-        if( appointmentService.isSlotTaken(appointment.getAppointmentTime() , location) ) {
-            //error message
-        }
-        //prevent booking if the user is fully vaccinated
-        else if (user.getDoses().size() > 1 || user.getAppointments().size() > 0) {
-        }
-        else {
-            //otherwise book the appointment
+        try {
             appointmentService.bookNewAppointment(user, appointment.getAppointmentTime(), location);
+        } catch (BookingUnavailable e) {
+            model.addAttribute("error", e);
         }
-        response.sendRedirect("/appointments");
-
+        return viewApptsGet(model);
     }
 
     @GetMapping("/edit")
@@ -94,6 +88,7 @@ public class VaccineController {
     @GetMapping("/appointments")
     public String viewApptsGet(Model model) {
         model.addAttribute("user", userService.getCurrentUser());
+        model.addAttribute("appointment", new Appointment());
         return "viewAppointments";
     }
 

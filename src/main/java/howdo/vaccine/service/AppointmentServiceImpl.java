@@ -27,7 +27,19 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment bookNewAppointment(User user, Date date, VaccinationCentre centre) {
+    public Appointment bookNewAppointment(User user, Date date, VaccinationCentre centre) throws BookingUnavailable {
+        if (isSlotTaken(date, centre)) {
+            throw new BookingUnavailable("Time slot taken");
+        }
+
+        if (user.getDoses().size() >= 2) {
+            throw new BookingUnavailable("You are already fully vaccinated");
+        }
+
+        if (!user.getAuthorities().isEmpty()) {
+            throw new BookingUnavailable("You are already fully vaccinated");
+        }
+
         Appointment appointment = new Appointment();
 
         appointment.setUser(user);
@@ -68,7 +80,11 @@ public class AppointmentServiceImpl implements AppointmentService {
             calendar.setTime(appointment.getAppointmentTime());
             calendar.add(Calendar.DAY_OF_YEAR, 21);
 
-            bookNewAppointment(user, calendar.getTime(), appointment.getLocation());
+            try {
+                bookNewAppointment(user, calendar.getTime(), appointment.getLocation());
+            } catch (BookingUnavailable e) {
+                e.printStackTrace();
+            }
         }
 
         //delete the old appointment

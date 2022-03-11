@@ -21,6 +21,10 @@
 
     <h1 class="heading">Your Appointments</h1>
 
+    <div th:if="${error != null}" class="alert alert-danger" th:text="${error.getMessage()}">
+        Error
+    </div>
+
     <div th:if="${!user.getAppointments().isEmpty()}" class="row">
         <div class="panel panel-default" th:each="app : ${user.getAppointments()}">
             <div class="panel-body">

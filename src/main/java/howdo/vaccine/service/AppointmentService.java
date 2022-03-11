@@ -10,7 +10,7 @@ public interface AppointmentService {
 
     Appointment getAppointment(long id);
 
-    Appointment bookNewAppointment(User user, Date date, VaccinationCentre centre);
+    Appointment bookNewAppointment(User user, Date date, VaccinationCentre centre) throws BookingUnavailable;
 
     void cancelAppointment(Appointment appointment);
 
