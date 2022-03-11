@@ -79,6 +79,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     public boolean isSlotTaken(Date date)
     {
         //if the list is empty the slot is not taken
-        return !appointmentRepository.findByDate(date).isEmpty();
+        return !appointmentRepository.findByAppointmentTime(date).isEmpty();
     }
 }

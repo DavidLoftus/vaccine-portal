@@ -7,5 +7,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface VaccineAptRepository extends JpaRepository<Appointment, Long> {
-    List<Appointment> findByDate(Date date);
+    List<Appointment> findByAppointmentTime(Date date);
 }

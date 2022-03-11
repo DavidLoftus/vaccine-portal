@@ -16,7 +16,7 @@ public class Appointment {
     private Long id;
 
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm", iso = DateTimeFormat.ISO.DATE)
     private Date appointmentTime;
 
     @ManyToOne
