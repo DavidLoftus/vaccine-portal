@@ -64,6 +64,10 @@ public class UserServiceImpl implements UserService {
             username = principal.toString();
         }
 
+        if (username.equals("anonymousUser")) {
+            return null;
+        }
+
         return getUser(username);
     }
 }

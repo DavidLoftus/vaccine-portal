@@ -44,6 +44,11 @@ public class AuthController {
         response.sendRedirect("/");
     }
 
+    @GetMapping("/login")
+    public String loginGet() {
+        return "login";
+    }
+
     @Value("${portal.admin.password}")
     private String adminPassword = "password";
 

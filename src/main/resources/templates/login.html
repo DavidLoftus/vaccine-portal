@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org">
+<!--/*@thymesVar id="user" type="howdo.vaccine.model.UserRegistrationForm"*/-->
+<head>
+    <meta charset="UTF-8"/>
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/css/style.css" th:href="@{style.css}" />
+
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" href="../static/css/bootstrap.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.css}" href="../static/css/bootstrap-theme.css">
+</head>
+<body class="bodyClass">
+
+<div class="container">
+    <header class="row" th:insert="fragments/general :: header"></header>
+
+    <!--
+    TODO: Implement registration form
+    Users can register to the Vaccination System: Users can register by providing their personal
+    details (name, surname, date of birth,  PPS Number, address, phone number, email address, nationality).
+    Only users who are over 18 can register in the system correctly.
+    -->
+    <div class="page-header">
+        <h1>User Registration</h1>
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger">
+        Bad credentials.
+    </div>
+    <div th:if="${param.logout}" class="alert alert-success">
+        You have been logged out.
+    </div>
+
+    <form method="post" th:action="@{/login}">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="ppsNumberFormInput">PPSN</label>
+                    <input class="form-control" id="ppsNumberFormInput" name="username"/>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label for="passwordFormInput">Password</label>
+                    <input class="form-control" id="passwordFormInput" type="password" name="password"/>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-default" type="submit">Login</button>
+    </form>
+
+</div>
+</body>
+</html>
