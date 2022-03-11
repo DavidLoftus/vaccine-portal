@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Stats</title>
@@ -10,9 +11,10 @@
             packages: ['corechart']
         });
     </script>
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
 </head>
 <body>
-
+    <header class="row" th:insert="fragments/general :: header"></header>
     <table class="statsTable">
         <tr><th><h1>Stats</h1></th></tr>
         <tr>
