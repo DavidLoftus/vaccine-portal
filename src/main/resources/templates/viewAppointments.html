@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <title>Edit Your Appointments</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/style.css" th:href="@{style.css}" />
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
 </head>
 <body>
+
+<header th:insert="fragments/general :: header"></header>
+
 <div>
     <h3>Your Appointments</h3>
 </div>
