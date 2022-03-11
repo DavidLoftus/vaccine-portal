@@ -72,6 +72,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         activityTrackerService.userReceivedVaccine(user, dose);
 
+        //delete the old appointment
+        appointmentRepository.delete(appointment);
+
         //book a second appointment if this is the first one
         if (dose.getDose() == 1)
         {
@@ -86,9 +89,6 @@ public class AppointmentServiceImpl implements AppointmentService {
                 e.printStackTrace();
             }
         }
-
-        //delete the old appointment
-        appointmentRepository.delete(appointment);
     }
 
     @Override
