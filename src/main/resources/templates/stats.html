@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.thymeleaf.org">
+      xsi:schemaLocation="http://www.thymeleaf.org" xmlns:c="">
 <head>
     <meta charset="UTF-8">
     <title>Stats</title>
@@ -22,6 +22,46 @@
     <div class="container">
         <header class="row" th:insert="fragments/general :: header"></header>
         <table class="statsTable">
+
+
+            <tr><th><h1>User Information</h1></th></tr>
+            <tr>
+                <th>Name: </th><th th:text="${fullName}"></th>
+            </tr>
+            <tr>
+                <th>PPS Number: </th><th th:text="${PPS}"></th>
+            </tr>
+            <tr>
+                <th>Date of Birth: </th><th th:text="${birthDate}"></th>
+            </tr>
+            <tr>
+                <th>Phone Number: </th><th th:text="${phoneNumber}"></th>
+            </tr>
+            <tr>
+                <th>Email Address: </th><th th:text="${email}"></th>
+            </tr>
+            <tr>
+                <th>Nationality: </th><th th:text="${nationality}"></th>
+            </tr>
+
+            <tr></tr><tr><th><h1>Appointment Information</h1></th></tr>
+
+                <tr th:each="appointment : ${appointments}">
+                    <td th:text="${appointment.location.name}"></td>
+                    <td th:text="${appointment.appointmentTime}"></td>
+
+                </tr>
+
+            <tr></tr><tr><th><h1>Vaccine Dose Information</h1></th></tr>
+
+            <tr th:each="userDose : ${userDoses}">
+                <td th:text="${userDose.vaccineType}"></td>
+                <td th:text="${userDose.date}"></td>
+
+            </tr>
+
+
+
             <tr><th><h1>Stats</h1></th></tr>
             <tr>
                 <th>Number of registered citizens:</th>

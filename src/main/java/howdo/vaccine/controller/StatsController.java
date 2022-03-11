@@ -1,11 +1,20 @@
 package howdo.vaccine.controller;
 
+import howdo.vaccine.model.Appointment;
+import howdo.vaccine.model.User;
+import howdo.vaccine.model.VaccineDose;
 import howdo.vaccine.repository.*;
+import howdo.vaccine.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class StatsController {
@@ -18,6 +27,10 @@ public class StatsController {
 
     @Autowired
     VaccinationCentreRepository vaccinationCentreRepository;
+
+    @Autowired
+    private UserService userService;
+
 
     @ModelAttribute("page")
     public String getPage() {
@@ -41,7 +54,6 @@ public class StatsController {
         int zeroDosesTotal = userRepository.zeroDosesTotal();
         int oneDosesTotal = userRepository.oneDosesTotal();
         int twoDosesTotal = userRepository.twoDosesTotal();
-        //ArrayList<Integer> ageList = userRepository.userAges();
 
         model.addAttribute("doseTotal", doseTotal);
         model.addAttribute("userTotal", userTotal);
@@ -52,6 +64,34 @@ public class StatsController {
         model.addAttribute("zeroDosesTotal", zeroDosesTotal);
         model.addAttribute("oneDosesTotal", oneDosesTotal);
         model.addAttribute("twoDosesTotal", twoDosesTotal);
+
+
+        User currentUser = userService.getCurrentUser();
+        Long ID = currentUser.getId();
+        String firstName = userRepository.getUserFirstName(ID);
+        String lastName = userRepository.getUserLastName(ID);
+        String fullName = firstName + " " + lastName;
+        String PPS = userRepository.getPpsNumber(ID);
+        String birthDate = userRepository.getDateOfBirth(ID);
+
+        String phoneNumber = userRepository.getPhoneNumber(ID);
+        String email = userRepository.getEmailAddress(ID);
+        String nationality = userRepository.getNationality(ID);
+
+        List<Appointment> appointments = currentUser.getAppointments();
+        List<VaccineDose> userDoses = currentUser.getDoses();
+
+        model.addAttribute("fullName", fullName);
+        model.addAttribute("PPS", PPS);
+        model.addAttribute("birthDate", birthDate);
+
+        model.addAttribute("phoneNumber", phoneNumber);
+        model.addAttribute("email", email);
+        model.addAttribute("nationality", nationality);
+        model.addAttribute("appointments", appointments);
+        model.addAttribute("userDoses", userDoses);
+
+
         return "stats";
     }
 

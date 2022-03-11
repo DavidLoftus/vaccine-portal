@@ -1,7 +1,7 @@
 package howdo.vaccine.service;
 
-import howdo.vaccine.model.Appointment;
 import howdo.vaccine.model.User;
+import howdo.vaccine.model.Appointment;
 import howdo.vaccine.model.UserActivityEvent;
 import howdo.vaccine.model.VaccineDose;
 import howdo.vaccine.repository.UserActivityEventRepository;
@@ -49,6 +49,11 @@ public class ActivityTrackerServiceImpl implements ActivityTrackerService {
     @Override
     public void userReceivedVaccine(User user, VaccineDose dose) {
         addUserEvent(user, "Received vaccine dose #" + dose.getDose());
+    }
+
+    @Override
+    public void userCancelledAppointment(User user, Appointment appointment) {
+
     }
 
     @Override
