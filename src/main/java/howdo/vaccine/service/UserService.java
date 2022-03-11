@@ -3,7 +3,6 @@ package howdo.vaccine.service;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 

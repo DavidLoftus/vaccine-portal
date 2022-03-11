@@ -3,14 +3,11 @@ package howdo.vaccine.controller;
 import howdo.vaccine.model.Appointment;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.VaccinationCentre;
-import howdo.vaccine.model.VaccineDose;
-import howdo.vaccine.repository.UserRepository;
-import howdo.vaccine.repository.VaccineAptRepository;
 import howdo.vaccine.repository.VaccineCentreRepository;
-import howdo.vaccine.repository.VaccineDoseRepository;
+import howdo.vaccine.service.ActivityTrackerService;
+import howdo.vaccine.service.AppointmentService;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,49 +20,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.text.*;
-import java.util.Calendar;
-import java.util.Date;
+import java.text.ParseException;
 import java.util.List;
 
 @Controller
 public class VaccineController {
-
-    @Autowired
-    VaccineAptRepository appointmentRepository;
-
-    @Autowired
-    UserRepository userRepository;
-
     @Autowired
     VaccineCentreRepository centreRepository;
 
     @Autowired
-    VaccineDoseRepository doseRepository;
+    AppointmentService appointmentService;
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    private ActivityTrackerService activityTrackerService;
 
     @ModelAttribute("page")
     public String getPage() {
         return "appointments";
     }
 
-    private void bookAppointment(User user, VaccinationCentre location, Date date)
-    {
-        //find the entry with the largest id and add one to it; prevents repeat ids without needing to update a static variable
-        //ternary operator prevents NPEs
-        long id = (appointmentRepository.findAll().size() != 0) ?
-                appointmentRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).get(0).getId() + 1
-                : 1;
-        Appointment appointment = new Appointment();
-
-        appointment.setId(id);
-        appointment.setUser(user);
-        appointment.setLocation(location);
-        appointment.setAppointmentTime(date);
-        appointmentRepository.save(appointment);
-    }
 
     //add a list of VaccinationCentres to the model
     @ModelAttribute
@@ -82,8 +58,7 @@ public class VaccineController {
 
 
     @PostMapping(value = "/appointments", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment,
-                                 Model model) throws IOException, ParseException {
+    public void appointmentsPost(HttpServletResponse response, HttpServletRequest request, @Valid @ModelAttribute Appointment appointment) throws IOException, ParseException {
         //parse the data from the form
         User user = userService.getCurrentUser();
         String locationString = request.getParameter("location");   //contains the ID of the VaccinationCentre
@@ -94,17 +69,17 @@ public class VaccineController {
         {
             response.sendRedirect("/appointments");
         }
-        else
-        {
+        else {
             //otherwise book the appointment
-            bookAppointment(user, location, appointment.getAppointmentTime());
-
-            response.sendRedirect("/");
+            appointmentService.bookNewAppointment(user, appointment.getAppointmentTime(), location);
         }
+
+        response.sendRedirect("/appointments");
     }
 
     @GetMapping("/edit")
-    public String editGet(@ModelAttribute User user) {
+    public String editGet(Model model) {
+        model.addAttribute("page", "admin");
         return "editVaccineAppt";
     }
 
@@ -112,34 +87,9 @@ public class VaccineController {
     @PostMapping(value = "/edit/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void editPost(HttpServletResponse response, HttpServletRequest request,
                          @PathVariable long id) throws IOException, ParseException {
+        Appointment appointment = appointmentService.getAppointment(id);
 
-        //convert this appointment into a dose
-        Appointment app = appointmentRepository.getOne(id);
-        VaccineDose dose = new VaccineDose();
-
-        long doseID = (doseRepository.findAll().size() != 0) ?
-                doseRepository.findAll(Sort.by(Sort.Direction.DESC, "id")).get(0).getId() + 1 :
-                1;
-        dose.setId(doseID);
-        dose.setDose(app.getUser().getDoses().isEmpty() ? 1 : 2);
-        dose.setUser(app.getUser());
-        dose.setDate(app.getAppointmentTime());
-        dose.setVaccineType(request.getParameter("type"));
-        doseRepository.save(dose);
-
-        //book a second appointment if this is the first one
-        if (dose.getDose() == 1)
-        {
-            //book it three weeks later
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(app.getAppointmentTime());
-            calendar.add(Calendar.DAY_OF_YEAR, 21);
-
-            bookAppointment(app.getUser(), app.getLocation(), calendar.getTime());
-        }
-
-        //delete the old appointment
-        appointmentRepository.delete(app);
+        appointmentService.confirmAppointment(appointment, request.getParameter("type"));
 
         response.sendRedirect("/");
     }
@@ -154,8 +104,8 @@ public class VaccineController {
     @PostMapping(value = "/cancel/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void cancelApptPost(HttpServletResponse response, HttpServletRequest request,
                          @PathVariable long id) throws IOException {
-        Appointment app = appointmentRepository.getOne(id);
-        appointmentRepository.delete(app);
+        Appointment appointment = appointmentService.getAppointment(id);
+        appointmentService.cancelAppointment(appointment);
 
         response.sendRedirect("/viewAppts");
     }

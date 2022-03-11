@@ -21,6 +21,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ActivityTrackerService activityTrackerService;
+
     @Override
     public User createUser(String ppsNumber, String password, String firstName, String lastName, Date dateOfBirth, String phoneNumber, String emailAddress, Nationality nationality, Set<String> authorities) {
         User user = new User();
@@ -34,7 +37,11 @@ public class UserServiceImpl implements UserService {
         user.setNationality(nationality);
         user.setAuthorities(authorities);
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        activityTrackerService.userRegistered(user);
+
+        return user;
     }
 
     @Override

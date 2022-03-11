@@ -17,21 +17,44 @@
 <div class="container">
     <header class="row" th:insert="fragments/general :: header">
     </header>
-    <b th:text="${thread.title}"></b>
+
+    <div class="page-header">
+        <h1 th:text="${thread.title}">Title</h1>
+    </div>
 
     <div>
-        <div th:each="post : ${thread.posts}">
-            <b th:text="|${post.author.firstName}:|">John</b>
-            <p th:text="${post.content}">Whats the deal with airplane food.</p>
+        <div class="panel panel-default" th:each="post : ${thread.posts}">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span th:text="${post.author.firstName}">
+                        Foo
+                    </span>
+
+                    <span style="float: right" th:text="${post.dateCreated}">
+                        Date
+                    </span>
+                </h3>
+            </div>
+            <div class="panel-body" th:text="${post.content}">
+                Whats the deal with airplane food.
+            </div>
         </div>
     </div>
 
     <form method="post" th:action="@{'/forum/' + ${id}}">
-        <label>
-            Content:
-            <textarea name="content"></textarea>
-        </label>
-        <input type="submit">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <label for="contentInput">
+                    Reply:
+                </label>
+            </div>
+            <div class="panel-body">
+                <textarea id="contentInput" name="content"></textarea>
+            </div>
+            <div class="panel-footer">
+                <input type="submit">
+            </div>
+        </div>
     </form>
 </div>
 

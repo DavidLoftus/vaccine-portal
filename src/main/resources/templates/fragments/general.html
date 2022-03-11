@@ -22,6 +22,9 @@
     <li role="presentation" th:attr="class=${page == 'forum' ? 'active' : null }">
       <a th:href="@{/forum}">Forum</a>
     </li>
+    <li role="presentation" th:attr="class=${page == 'activity' ? 'active' : null }">
+      <a th:href="@{/activity}">Activity</a>
+    </li>
     <li role="presentation" sec:authorize="hasAuthority('ADMIN')" th:attr="class=${page == 'admin' ? 'active' : null }">
       <a th:href="@{/edit}">Admin</a>
     </li>
