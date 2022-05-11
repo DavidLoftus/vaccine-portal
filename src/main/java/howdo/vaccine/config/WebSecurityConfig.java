@@ -23,7 +23,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
             .and().formLogin().loginPage("/login")
             .and().httpBasic()
-            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"));
+            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .and().requiresChannel().anyRequest().requiresSecure();
     }
 
     @Bean

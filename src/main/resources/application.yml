@@ -1,4 +1,13 @@
-server.port: 8080
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: "classpath:keystore/site.p12"
+    key-store-password: password
+    key-alias: site
+
+http.port: 8080
+
 spring:
   application.name: vaccine-portal
 
@@ -13,3 +22,6 @@ portal:
   admin.password: password
 
 logging.level.root: debug
+
+security:
+  require-ssl: true
