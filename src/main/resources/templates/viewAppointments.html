@@ -12,7 +12,7 @@
     <!-- Optional theme -->
     <link rel="stylesheet" th:href="@{/css/bootstrap-theme.css}" href="../static/css/bootstrap-theme.css">
 
-    <script>
+    <script th:nonce="${cspNonce}">
 
         async function getTimes() {
             const locationInput = document.getElementById("locationInput");

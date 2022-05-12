@@ -1,5 +1,6 @@
 package howdo.vaccine.config;
 
+import howdo.vaccine.filter.CSPNonceFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
@@ -25,6 +27,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and().httpBasic()
             .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .and().requiresChannel().anyRequest().requiresSecure();
+
+        http
+            .csrf().disable()
+            .headers()
+                .xssProtection()
+                .and().contentSecurityPolicy("script-src 'self' 'unsafe-inline' 'nonce-{nonce}'; object-src 'none'; base-uri 'none'; report-uri http://localhost:8000/");
+        http.addFilterBefore(new CSPNonceFilter(), HeaderWriterFilter.class);
     }
 
     @Bean

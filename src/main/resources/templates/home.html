@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Stats</title>
     <link rel="stylesheet" type="text/css" media="all" href="../static/css/style.css" th:href="@{/css/style.css}" />
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
+    <script th:nonce="${cspNonce}" type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script th:nonce="${cspNonce}" type="text/javascript">
         google.charts.load('current', {
             packages: ['corechart']
         });
@@ -125,7 +125,7 @@
         </div>
 
         <div id="container" style="width: 550px; height: 400px; margin: 0 auto"></div>
-        <script>
+        <script th:nonce="${cspNonce}">
             function drawChart() {
 
                 var userTotal = [[${userTotal}]];
@@ -151,7 +151,7 @@
 
 
         <div id="container2" style="width: 550px; height: 400px; margin: 0 auto"></div>
-        <script>
+        <script th:nonce="${cspNonce}">
             function drawChart() {
 
                 var zeroDosesTotal = [[${zeroDosesTotal}]];
