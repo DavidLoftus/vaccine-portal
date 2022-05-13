@@ -1,5 +1,6 @@
 package howdo.vaccine.model;
 
+import org.hibernate.annotations.ColumnTransformer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -16,6 +17,10 @@ public class UserActivityEvent {
     private User user;
 
     @Column
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(description), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String description;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

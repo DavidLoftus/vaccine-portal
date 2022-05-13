@@ -18,6 +18,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 public class AuthController {
@@ -32,6 +34,7 @@ public class AuthController {
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void registerPost(HttpServletResponse response, @Valid @ModelAttribute("user") UserRegistrationForm form) throws IOException {
+
         userService.createUser(form.getPpsNumber(),
                 form.getPassword(),
                 form.getFirstName(),

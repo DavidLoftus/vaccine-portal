@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Stats</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../static/css/style.css" th:href="@{/css/style.css}" />
+    <script th:nonce="${cspNonce}" type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script th:nonce="${cspNonce}" type="text/javascript">
+        google.charts.load('current', {
+            packages: ['corechart']
+        });
+    </script>
+    <!--/*/ <th:block th:replace="fragments/general :: headerfiles"></th:block> /*/-->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" href="../static/css/bootstrap.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap-theme.css}" href="../static/css/bootstrap-theme.css">
+
+</head>
+<body>
+<div class="container">
+    <header class="row" th:insert="fragments/general :: header"></header>
+
+    <div class="row">
+        <h1>Something went wrong! </h1>
+        <h2>Our Engineers are on it</h2>
+        <a href="/">Go Home</a>
+    </div>
+</div>
+</body>
+</html>

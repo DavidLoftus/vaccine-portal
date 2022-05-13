@@ -28,12 +28,13 @@
         <h1>User Registration</h1>
     </div>
 
-    <form method="post" th:action="@{/register}" th:object="${user}">
+    <form class="needs-validation" method="post" th:action="@{/register}" th:object="${user}">
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">
                     <label for="ppsNumberFormInput">PPSN</label>
-                    <input class="form-control" id="ppsNumberFormInput" th:field="*{ppsNumber}"/>
+                    <input pattern="\d{7}[A-Z]{1,2}" title="A PPS Number is always 7 numbers followed by either one or 2 letters" class="form-control" id="ppsNumberFormInput" th:field="*{ppsNumber}"/>
+
                 </div>
             </div>
             <div class="col-sm-6">
@@ -105,6 +106,29 @@
 
         <button class="btn btn-default" type="submit">Submit</button>
     </form>
+
+    <script th:nonce="${cspNonce}">
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
 
 </div>
 </body>

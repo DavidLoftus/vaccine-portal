@@ -1,5 +1,7 @@
 package howdo.vaccine.model;
 
+import org.hibernate.annotations.ColumnTransformer;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -16,6 +18,10 @@ public class VaccineDose {
 
     private Integer dose;
 
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(vaccine_type), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String vaccineType;
 
     public Long getId() {

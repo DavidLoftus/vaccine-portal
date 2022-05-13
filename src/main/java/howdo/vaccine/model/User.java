@@ -1,6 +1,7 @@
 package howdo.vaccine.model;
 
 import howdo.vaccine.enums.Nationality;
+import org.hibernate.annotations.ColumnTransformer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -22,12 +23,25 @@ public class User {
     private Set<String> authorities;
 
     @NotBlank
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(password), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String password;
 
+
     @NotBlank
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(first_name), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String firstName;
 
     @NotBlank
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(last_name), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String lastName;
 
     @NotNull
@@ -36,13 +50,25 @@ public class User {
 
     @NotBlank
     @Column(unique = true)
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(pps_number), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String ppsNumber;
 
     @NotBlank
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(phone_number), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String phoneNumber;
 
     @Email
     @NotBlank
+    @ColumnTransformer(
+            read="AES_DECRYPT(UNHEX(phone_number), UNHEX(SHA2('secret', 512)))",
+            write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
+    )
     private String emailAddress;
 
     @NotNull

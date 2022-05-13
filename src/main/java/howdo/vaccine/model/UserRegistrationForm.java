@@ -7,11 +7,13 @@ import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 public class UserRegistrationForm {
     @NotBlank
     @Column(unique = true)
+    @Pattern(regexp = "\\d{7}[A-Z]{1,2}", message = "Invalid PPSN")
     private String ppsNumber;
 
     @NotBlank
