@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -99,7 +100,7 @@ public class VaccineController {
         return "viewAppointments";
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(value = "/cancel/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void cancelApptPost(HttpServletResponse response, HttpServletRequest request,
                          @PathVariable long id) throws IOException {
