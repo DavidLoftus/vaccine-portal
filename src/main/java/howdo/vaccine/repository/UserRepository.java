@@ -27,4 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT COUNT(id) FROM User WHERE doses.size = 2")
     int twoDosesTotal();
 
+
+    @Query("SELECT id FROM User WHERE ppsNumber = :ppsNumber")
+    long getId(@Param("ppsNumber") String ppsNumber);
+
 }
