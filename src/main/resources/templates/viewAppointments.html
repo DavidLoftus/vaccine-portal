@@ -12,37 +12,6 @@
     <!-- Optional theme -->
     <link rel="stylesheet" th:href="@{/css/bootstrap-theme.css}" href="../static/css/bootstrap-theme.css">
 
-    <script th:nonce="${cspNonce}">
-
-        async function getTimes() {
-            const locationInput = document.getElementById("locationInput");
-            const dateInput = document.getElementById("dateInput");
-
-            if (locationInput.value === "" || dateInput.value === "") return;
-
-            const query = "/appointments/times?" + new URLSearchParams({
-                "location": locationInput.value,
-                "date": dateInput.value,
-            });
-
-            const response = await fetch(query, {
-                "credentials": "include",
-                "headers": {
-                    "Accept": "text/html",
-                },
-                "referrer": "http://localhost:8080/login",
-                "method": "GET",
-                "mode": "cors"
-            });
-
-            const html = await response.text();
-            const timesContainer = document.getElementById("timesContainer");
-
-            timesContainer.innerHTML = html;
-        }
-
-    </script>
-
 </head>
 <body>
 
@@ -90,6 +59,37 @@
             <div id="timesContainer">
 
             </div>
+
+            <script th:nonce="${cspNonce}">
+                async function getTimes() {
+                    const locationInput = document.getElementById("locationInput");
+                    const dateInput = document.getElementById("dateInput");
+
+                    if (locationInput.value === "" || dateInput.value === "") return;
+
+                    const query = "/appointments/times?" + new URLSearchParams({
+                        "location": locationInput.value,
+                        "date": dateInput.value,
+                    });
+
+                    const response = await fetch(query, {
+                        "credentials": "include",
+                        "headers": {
+                            "Accept": "text/html",
+                        },
+                        "referrer": "http://localhost:8080/login",
+                        "method": "GET",
+                        "mode": "cors"
+                    });
+
+                    const html = await response.text();
+                    const timesContainer = document.getElementById("timesContainer");
+
+                    timesContainer.innerHTML = html;
+                }
+
+                document.getElementById("timesContainer").addEventListener("change", getTimes);
+            </script>
         </form>
     </div>
 </div>

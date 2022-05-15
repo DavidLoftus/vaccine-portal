@@ -1,0 +1,66 @@
+package howdo.vaccine.config;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+//@Component
+public class IpFilter extends DaoAuthenticationProvider {
+
+    public IpFilter(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
+        super();
+        setPasswordEncoder(passwordEncoder);
+        setUserDetailsService(userDetailsService);
+    }
+
+    public static final int IP_BAN_MINUTES = 20;
+
+    private final Map<String, Date> bannedIps = new HashMap<>();
+
+    public void banAddress(String ip) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MINUTE, IP_BAN_MINUTES);
+        bannedIps.put(ip, calendar.getTime());
+    }
+
+    private boolean isBanned(String remoteAddress) {
+        if (!bannedIps.containsKey(remoteAddress)) {
+            return false;
+        }
+
+        if (bannedIps.get(remoteAddress).toInstant().isAfter(Instant.now())) {
+            return true;
+        }
+
+        bannedIps.remove(remoteAddress);
+
+        return false;
+    }
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+        if (isBanned(details.getRemoteAddress())) {
+            throw new BadCredentialsException("IP Banned");
+        }
+        return super.authenticate(authentication);
+    }
+}

@@ -1,19 +1,25 @@
 package howdo.vaccine.controller;
 
 import howdo.vaccine.Application;
+import howdo.vaccine.config.IpFilter;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
 import howdo.vaccine.repository.UserRepository;
+import howdo.vaccine.service.UserDetailsServiceImpl;
 import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.authentication.event.LogoutSuccessEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +55,7 @@ public class AuthController {
     UserService userService;
 
     @Autowired
-    UserRepository userRepository;
+    IpFilter ipFilter;
 
     @GetMapping("/register")
     public String registerGet(@ModelAttribute("user") UserRegistrationForm user) {
@@ -90,20 +98,71 @@ public class AuthController {
         }
     }
 
+    private static class AuthenticationFailureCount {
+        public int count;
+        public Date lastFailure;
 
-    @EventListener
-    public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
+        public AuthenticationFailureCount(int count, Date lastFailure) {
+            this.count = count;
+            this.lastFailure = lastFailure;
+        }
+    }
 
-        UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
-        User user = userService.getUser(details.getUsername());
-        authLogger.info("User \"" + user.getId() + "\" has logged in");
+    private final Map<String, Integer> authFailures = new HashMap<>();
 
+    private void addStrikeToIp(String ip) {
+        if (!authFailures.containsKey(ip)) {
+            authFailures.put(ip, 1);
+            return;
+        }
+
+        int count = authFailures.getOrDefault(ip, 0);
+        count++;
+
+        if (count >= 5) {
+            count = 0;
+            authLogger.warn("IP " + ip + " has exceeded maximum failed login attempts, banning for 20 minutes.");
+            ipFilter.banAddress(ip);
+        }
+        authFailures.put(ip, count);
     }
 
     @EventListener
+    public void onAuthenticationFailure(AuthenticationFailureBadCredentialsEvent event) {
+        Authentication authentication = event.getAuthentication();
+        try {
+            Object principal = authentication.getPrincipal();
+            User user;
+            if (principal instanceof UserDetailsServiceImpl.MyUserDetails) {
+                user = ((UserDetailsServiceImpl.MyUserDetails) principal).getUser();
+            } else {
+                user = userService.getUser((String) principal);
+            }
+            authLogger.warn("Failed attempt to login to user " + user.getId());
+            userService.addLoginFailure(user);
+        } catch (UsernameNotFoundException ignored) {}
+        if (authentication.getDetails() instanceof WebAuthenticationDetails) {
+            WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+            addStrikeToIp(details.getRemoteAddress());
+        }
+    }
+
+    @EventListener
+    public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
+        Authentication authentication = event.getAuthentication();
+        UserDetailsServiceImpl.MyUserDetails userDetails = (UserDetailsServiceImpl.MyUserDetails) authentication.getPrincipal();
+        userService.addLoginSuccess(userDetails.getUser());
+
+        authLogger.info("User \"" + userDetails.getUser().getId() + "\" has logged in");
+    }
+
+
+
+    @EventListener
     public void logoutSuccess(LogoutSuccessEvent event) {
-        UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
-        User user = userService.getUser(details.getUsername());
+        Authentication authentication = event.getAuthentication();
+        UserDetailsServiceImpl.MyUserDetails userDetails = (UserDetailsServiceImpl.MyUserDetails) authentication.getPrincipal();
+        User user = userDetails.getUser();
         authLogger.info("User \"" + user.getId() + "\" has logged out");
 
     }

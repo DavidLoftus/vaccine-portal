@@ -9,11 +9,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.TemporalAmount;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 public class UserServiceImpl implements UserService {
+
+    private final int MAX_LOGIN_FAILURES = 3;
+    private final Duration ACCOUNT_LOCK_TIME = Duration.ofMinutes(20);
 
     @Autowired
     private UserRepository userRepository;
@@ -42,6 +49,25 @@ public class UserServiceImpl implements UserService {
         activityTrackerService.userRegistered(user);
 
         return user;
+    }
+
+    @Override
+    public void addLoginFailure(User user) {
+        int attempts = user.getLoginAttempts() + 1;
+        if (attempts >= MAX_LOGIN_FAILURES) {
+            user.setLoginAttempts(0);
+            Instant instant = new Date().toInstant().plus(Duration.ofMinutes(20));
+            user.setAccountLockExpiry(Date.from(instant));
+        } else {
+            user.setLoginAttempts(attempts);
+        }
+        userRepository.save(user);
+    }
+
+    @Override
+    public void addLoginSuccess(User user) {
+        user.setLoginAttempts(0);
+        userRepository.save(user);
     }
 
     @Override

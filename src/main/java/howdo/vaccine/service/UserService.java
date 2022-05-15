@@ -28,6 +28,9 @@ public interface UserService {
         return this.createUser(ppsNumber, password, firstName, lastName, dateOfBirth, phoneNumber, emailAddress, nationality, Set.of("USER"));
     }
 
+    void addLoginFailure(User user);
+    void addLoginSuccess(User user);
+
     User getUser(String ppsNumber);
 
     User getCurrentUser();

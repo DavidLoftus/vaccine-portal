@@ -2,6 +2,8 @@ package howdo.vaccine.model;
 
 import howdo.vaccine.enums.Nationality;
 import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.ColumnTransformer;
+import org.slf4j.Logger;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -19,7 +21,7 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> authorities;
 
     @NotBlank
@@ -28,7 +30,6 @@ public class User {
             write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
     )
     private String password;
-
 
     @NotBlank
     @ColumnTransformer(
@@ -82,6 +83,12 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @OrderBy("appointmentTime")
     private List<Appointment> appointments;
+
+    @Column
+    private int loginAttempts = 0;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private Date accountLockExpiry = null;
 
     public Long getId() {
         return id;
@@ -177,5 +184,21 @@ public class User {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public int getLoginAttempts() {
+        return loginAttempts;
+    }
+
+    public void setLoginAttempts(int loginAttempts) {
+        this.loginAttempts = loginAttempts;
+    }
+
+    public Date getAccountLockExpiry() {
+        return accountLockExpiry;
+    }
+
+    public void setAccountLockExpiry(Date accountLockExpiry) {
+        this.accountLockExpiry = accountLockExpiry;
     }
 }
