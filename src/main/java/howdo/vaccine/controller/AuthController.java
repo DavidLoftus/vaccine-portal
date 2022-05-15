@@ -96,7 +96,7 @@ public class AuthController {
 
         UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
         User user = userService.getUser(details.getUsername());
-        AuthController.authLogger.info("User \"" + user.getId() + "\" has logged in");
+        authLogger.info("User \"" + user.getId() + "\" has logged in");
 
     }
 
@@ -104,7 +104,7 @@ public class AuthController {
     public void logoutSuccess(LogoutSuccessEvent event) {
         UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
         User user = userService.getUser(details.getUsername());
-        AuthController.authLogger.info("User \"" + user.getId() + "\" has logged out");
+        authLogger.info("User \"" + user.getId() + "\" has logged out");
 
     }
 

@@ -81,7 +81,7 @@ public class VaccineController {
 
         try {
             Appointment appointment = appointmentService.bookNewAppointment(user, date.atTime(time), location);
-            logger.info("User \"" + userService.getCurrentUser().getId() + "\" has booked a new appointment: " + appointment.getId());
+            logger.info("User \"" + userService.getCurrentUser().getId() + "\" has booked a new appointment: " + appointment.getId() + "\"");
             response.sendRedirect("/appointments");
         } catch (BookingUnavailable e) {
             model.addAttribute("error", e);

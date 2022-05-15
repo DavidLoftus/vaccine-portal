@@ -70,7 +70,7 @@ public class ForumController {
 
         postRepo.save(post);
 
-        ForumController.forumLogger.info("User \"" + userService.getCurrentUser().getId() + "\" has posted a new question");
+        ForumController.forumLogger.info("User \"" + userService.getCurrentUser().getId() + "\" has posted a new question (Post ID: " + post.getId() + ")");
 
         response.sendRedirect("/forum/" + thread.getId());
     }
@@ -94,7 +94,7 @@ public class ForumController {
 
         postRepo.save(post);
 
-        ForumController.forumLogger.info("User \"" + userService.getCurrentUser().getId() + "\" has posted a new comment");
+        ForumController.forumLogger.info("User \"" + userService.getCurrentUser().getId() + "\" has posted a new comment (ID: " + post.getId() + ") for thread: (ID: " + thread.getId() + ")");
 
 
         response.sendRedirect("/forum/" + thread.getId());
