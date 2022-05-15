@@ -4,6 +4,8 @@ import howdo.vaccine.model.Appointment;
 import howdo.vaccine.model.VaccinationCentre;
 import howdo.vaccine.repository.VaccinationCentreRepository;
 import howdo.vaccine.service.AppointmentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -19,6 +21,10 @@ import java.util.List;
 
 @Controller
 public class AdminController {
+
+    private static final Logger adminLogger = LogManager.getLogger(AdminController.class);
+
+
     @Autowired
     private AppointmentService appointmentService;
 
@@ -49,6 +55,9 @@ public class AdminController {
         Appointment appointment = appointmentService.getAppointment(id);
 
         appointmentService.confirmAppointment(appointment, request.getParameter("type"));
+
+        AdminController.adminLogger.info("An admin has updated appointment \"" + appointment.getId() + "\"");
+
 
         response.sendRedirect("/admin");
     }

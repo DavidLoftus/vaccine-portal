@@ -8,6 +8,8 @@ import howdo.vaccine.service.ActivityTrackerService;
 import howdo.vaccine.service.AppointmentService;
 import howdo.vaccine.service.BookingUnavailable;
 import howdo.vaccine.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -29,6 +31,10 @@ import java.util.List;
 
 @Controller
 public class VaccineController {
+
+    private static final Logger logger = LogManager.getLogger(VaccineController.class);
+
+
     @Autowired
     VaccineCentreRepository centreRepository;
 
@@ -74,11 +80,15 @@ public class VaccineController {
         VaccinationCentre location = centreRepository.getOne(locationId);
 
         try {
-            appointmentService.bookNewAppointment(user, date.atTime(time), location);
+            Appointment appointment = appointmentService.bookNewAppointment(user, date.atTime(time), location);
+            logger.info("User \"" + userService.getCurrentUser().getId() + "\" has booked a new appointment: " + appointment.getId() + "\"");
             response.sendRedirect("/appointments");
         } catch (BookingUnavailable e) {
             model.addAttribute("error", e);
         }
+
+
+
         return viewApptsGet(model);
     }
 
@@ -95,6 +105,8 @@ public class VaccineController {
                          @PathVariable long id) throws IOException {
         Appointment appointment = appointmentService.getAppointment(id);
         appointmentService.cancelAppointment(appointment);
+
+        logger.info("User \"" + userService.getCurrentUser().getId() + "\" has cancelled their appointment: " + appointment.getId());
 
         response.sendRedirect("/appointments");
     }

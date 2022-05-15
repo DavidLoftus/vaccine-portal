@@ -7,6 +7,8 @@ import howdo.vaccine.model.User;
 import howdo.vaccine.repository.ForumPostRepository;
 import howdo.vaccine.repository.ForumThreadRepository;
 import howdo.vaccine.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,9 @@ import java.util.List;
 @Controller
 @RequestMapping(path = "/forum")
 public class ForumController {
+
+    private static final Logger forumLogger = LogManager.getLogger(ForumController.class);
+
 
     @Autowired
     private ForumThreadRepository threadRepo;
@@ -65,6 +70,7 @@ public class ForumController {
 
         postRepo.save(post);
 
+        ForumController.forumLogger.info("User \"" + userService.getCurrentUser().getId() + "\" has posted a new question (Post ID: " + post.getId() + ")");
 
         response.sendRedirect("/forum/" + thread.getId());
     }
@@ -87,6 +93,9 @@ public class ForumController {
         post.setDateCreated(new Date());
 
         postRepo.save(post);
+
+        ForumController.forumLogger.info("User \"" + userService.getCurrentUser().getId() + "\" has posted a new comment (ID: " + post.getId() + ") for thread: (ID: " + thread.getId() + ")");
+
 
         response.sendRedirect("/forum/" + thread.getId());
     }
