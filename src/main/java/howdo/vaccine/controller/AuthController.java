@@ -1,6 +1,6 @@
 package howdo.vaccine.controller;
 
-import howdo.vaccine.config.IpFilter;
+import howdo.vaccine.config.IpFilterAuthenticationProvider;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
@@ -43,7 +43,7 @@ public class AuthController {
     UserService userService;
 
     @Autowired
-    IpFilter ipFilter;
+    IpFilterAuthenticationProvider ipFilter;
 
     @GetMapping("/register")
     public String registerGet(@ModelAttribute("user") UserRegistrationForm user) {

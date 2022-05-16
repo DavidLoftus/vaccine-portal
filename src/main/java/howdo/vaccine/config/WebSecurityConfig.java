@@ -14,12 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -31,8 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private PasswordEncoder passwordEncoder;
 
     @Bean
-    public IpFilter ipFilterAuthenticationProvider() {
-        return new IpFilter(passwordEncoder, userDetailsService);
+    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
+        return new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
     }
 
     @Override
