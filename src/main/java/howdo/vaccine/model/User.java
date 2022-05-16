@@ -67,7 +67,7 @@ public class User {
     @Email
     @NotBlank
     @ColumnTransformer(
-            read="AES_DECRYPT(UNHEX(phone_number), UNHEX(SHA2('secret', 512)))",
+            read="AES_DECRYPT(UNHEX(email_address), UNHEX(SHA2('secret', 512)))",
             write="HEX(AES_ENCRYPT(?, UNHEX(SHA2('secret', 512))))"
     )
     private String emailAddress;

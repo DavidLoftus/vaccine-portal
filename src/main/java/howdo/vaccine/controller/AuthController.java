@@ -1,23 +1,21 @@
 package howdo.vaccine.controller;
 
-import howdo.vaccine.Application;
 import howdo.vaccine.config.IpFilter;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
-import howdo.vaccine.repository.UserRepository;
 import howdo.vaccine.service.UserDetailsServiceImpl;
 import howdo.vaccine.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.authentication.event.LogoutSuccessEvent;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
@@ -33,16 +31,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.w3c.dom.events.Event;
 
 
 @Controller
@@ -92,19 +80,9 @@ public class AuthController {
         try {
             userService.getUser("admin");
         } catch (UsernameNotFoundException e) {
-            userService.createUser("admin", "password", "John", "Smith",
+            userService.createUser("admin", adminPassword, "John", "Smith",
                     new Date(), "0123456789", "admin@localhost", Nationality.IRISH,
                     Set.of("USER", "ADMIN"));
-        }
-    }
-
-    private static class AuthenticationFailureCount {
-        public int count;
-        public Date lastFailure;
-
-        public AuthenticationFailureCount(int count, Date lastFailure) {
-            this.count = count;
-            this.lastFailure = lastFailure;
         }
     }
 
