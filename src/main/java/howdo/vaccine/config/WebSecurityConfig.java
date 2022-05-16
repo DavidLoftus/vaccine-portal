@@ -3,6 +3,7 @@ package howdo.vaccine.config;
 import howdo.vaccine.filter.CSPNonceFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -73,5 +77,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
 
         return delegatingPasswordEncoder;
+    }
+
+    @Bean
+    public ServletContextInitializer servletContextInitializer() {
+        return servletContext -> servletContext.getSessionCookieConfig().setSecure(true);
     }
 }
