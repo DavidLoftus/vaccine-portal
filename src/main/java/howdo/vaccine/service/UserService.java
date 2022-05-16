@@ -3,6 +3,7 @@ package howdo.vaccine.service;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Set;
 
@@ -31,4 +32,6 @@ public interface UserService {
     User getUser(String ppsNumber);
 
     User getCurrentUser();
+
+    String generateQRUrl(User user);
 }

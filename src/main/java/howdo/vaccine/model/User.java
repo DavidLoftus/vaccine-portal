@@ -2,6 +2,7 @@ package howdo.vaccine.model;
 
 import howdo.vaccine.enums.Nationality;
 import org.hibernate.annotations.ColumnTransformer;
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -82,6 +83,14 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @OrderBy("appointmentTime")
     private List<Appointment> appointments;
+
+    private boolean isUsing2FA;
+
+    //don't persist this
+    private String secret;
+    public User() {
+        this.secret= Base32.random();
+    }
 
     public Long getId() {
         return id;
@@ -178,4 +187,12 @@ public class User {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
+
+    public String getSecret() { return secret; }
+
+    public void setSecret(String secret) { this.secret = secret; }
+
+    public boolean isUsing2FA() { return isUsing2FA; }
+
+    public void setUsing2FA(boolean using2FA) { isUsing2FA = using2FA; }
 }

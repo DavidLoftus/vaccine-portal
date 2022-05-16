@@ -11,6 +11,8 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> getUserByPpsNumber(String ppsNumber);
 
+    List<User> getUserByEmailAddress(String emailAddress);
+
     @Query("SELECT COUNT(id) FROM User")
     int userTotal();
 

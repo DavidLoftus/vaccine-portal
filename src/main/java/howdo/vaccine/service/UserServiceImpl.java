@@ -9,6 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ActivityTrackerService activityTrackerService;
+
+    public static String QR_PREFIX = "https://chart.googleapis.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl=";
 
     @Override
     public User createUser(String ppsNumber, String password, String firstName, String lastName, Date dateOfBirth, String phoneNumber, String emailAddress, Nationality nationality, Set<String> authorities) {
@@ -69,5 +74,13 @@ public class UserServiceImpl implements UserService {
         }
 
         return getUser(username);
+    }
+
+    @Override
+    public String generateQRUrl(User user) {
+        return QR_PREFIX + URLEncoder.encode(String.format(
+                "otpauth://totp/%s:%s?secret=%s&issuer=%s",
+                "vaxapp", user.getEmailAddress(), user.getSecret(), "vaxapp"),
+                StandardCharsets.UTF_8);
     }
 }

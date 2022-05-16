@@ -1,6 +1,6 @@
 package howdo.vaccine.model;
 
-import howdo.vaccine.annotation.ValidPassword;
+//import howdo.vaccine.annotation.ValidPassword;
 import howdo.vaccine.enums.Nationality;
 import org.springframework.format.annotation.DateTimeFormat;
 
