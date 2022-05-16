@@ -5,6 +5,9 @@ server:
     key-store: "classpath:keystore/site.p12"
     key-store-password: password
     key-alias: site
+  servlet:
+    session:
+      timeout: 15m
 
 
 http.port: 8080
@@ -15,7 +18,7 @@ spring:
   datasource:
     url: "jdbc:mysql://localhost:3306/vaccine"
     username: root
-    password: example
+    password: R5aS#C4b&NB$?@6y
 
   jpa.hibernate.ddl-auto: update
 

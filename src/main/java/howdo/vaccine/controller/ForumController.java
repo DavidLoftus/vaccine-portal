@@ -10,6 +10,7 @@ import howdo.vaccine.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -79,9 +80,11 @@ public class ForumController {
     public String getThread(@PathVariable("id") long id, Model model) {
         model.addAttribute("thread", threadRepo.getOne(id));
         model.addAttribute("id", id);
+        model.addAttribute("user", userService.getCurrentUser());
         return "forum_thread";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{id}")
     public void newComment(HttpServletResponse response, @PathVariable("id") long id, @RequestParam String content, Model model) throws IOException {
         ForumThread thread = threadRepo.getOne(id);

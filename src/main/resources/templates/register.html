@@ -48,7 +48,7 @@
             <div class="col-sm-6">
                 <div class=".col-sm-2 form-group">
                     <label for="passwordFormInput">Password</label>
-                    <input class="form-control" id="passwordFormInput" type="password" th:field="*{password}"/>
+                    <input pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,30}$" title="A password should have at least one uppercase letter, lowercase letter, number and special character, and should be at least 10 characters long." class="form-control" id="passwordFormInput" type="password" th:field="*{password}"/>
                 </div>
             </div>
             <div class="col-sm-6">
