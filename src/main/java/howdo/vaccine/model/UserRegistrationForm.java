@@ -1,6 +1,5 @@
 package howdo.vaccine.model;
 
-import howdo.vaccine.annotation.ValidPassword;
 import howdo.vaccine.enums.Nationality;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,7 +17,6 @@ public class UserRegistrationForm {
     private String ppsNumber;
 
     @NotBlank
-//    @ValidPassword
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,30}$", message = "Invalid password chosen")
     private String password;
 

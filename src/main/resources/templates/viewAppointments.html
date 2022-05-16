@@ -45,13 +45,13 @@
                 <label for="dateInput">
                     Select a Timeslot:
                 </label>
-                <input onchange="getTimes()" type="date" id="dateInput" name="date"/>
+                <input type="date" id="dateInput" name="date"/>
             </div>
             <div>
                 <label for="locationInput">
                     Select a Location:
                 </label>
-                <select onchange="getTimes()" class="form-control" id="locationInput" name="location"> <!-- th:field="*{location}"> -->
+                <select class="form-control" id="locationInput" name="location"> <!-- th:field="*{location}"> -->
                     <!-- use th to iterate through the vaccination centres-->
                     <option th:each="centre : ${locations}" th:value="${centre.getId()}" th:text="${centre.getName()}"></option>
                 </select>
@@ -88,7 +88,8 @@
                     timesContainer.innerHTML = html;
                 }
 
-                document.getElementById("timesContainer").addEventListener("change", getTimes);
+                document.getElementById("dateInput").addEventListener("change", getTimes);
+                document.getElementById("locationInput").addEventListener("change", getTimes);
             </script>
         </form>
     </div>
