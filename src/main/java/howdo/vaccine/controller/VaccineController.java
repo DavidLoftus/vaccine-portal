@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -100,11 +101,16 @@ public class VaccineController {
         return "viewAppointments";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(value = "/cancel/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public void cancelApptPost(HttpServletResponse response, HttpServletRequest request,
                          @PathVariable long id) throws IOException {
+        User user = userService.getCurrentUser();
         Appointment appointment = appointmentService.getAppointment(id);
+
+        if (appointment.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Appointment does not belong to current user.");
+        }
+
         appointmentService.cancelAppointment(appointment);
 
         logger.info("User \"" + userService.getCurrentUser().getId() + "\" has cancelled their appointment: " + appointment.getId());
