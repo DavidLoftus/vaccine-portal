@@ -17,7 +17,6 @@ public class UserRegistrationForm {
     private String ppsNumber;
 
     @NotBlank
-//    @ValidPassword
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,30}$", message = "Invalid password chosen")
     private String password;
 

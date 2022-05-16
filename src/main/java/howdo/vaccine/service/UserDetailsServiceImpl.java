@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.transaction.Transactional;
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,64 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
     private Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+
+
+    public class MyUserDetails implements UserDetails {
+
+        private final User user;
+
+        public MyUserDetails(User user) {
+            this.user = user;
+        }
+
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            var dbAuths = user.getAuthorities()
+                    .stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+
+            if (dbAuths.isEmpty()) {
+                logger.warn("User '{}' has no authorities and will be treated as 'not found'", user.getPpsNumber());
+            }
+
+            return dbAuths;
+        }
+
+        @Override
+        public String getPassword() {
+            return user.getPassword();
+        }
+
+        @Override
+        public String getUsername() {
+            return user.getPpsNumber();
+        }
+
+        @Override
+        public boolean isAccountNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isAccountNonLocked() {
+            return user.getAccountLockExpiry() == null || user.getAccountLockExpiry().compareTo(new Date()) < 0;
+        }
+
+        @Override
+        public boolean isCredentialsNonExpired() {
+            return true;
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,21 +95,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     MessageFormat.format("Username {0} not found", username));
         }
 
-        User user = users.get(0); // contains no GrantedAuthority[]
-
-        List<GrantedAuthority> dbAuths = user.getAuthorities()
-                .stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        if (dbAuths.size() == 0) {
-            this.logger.debug("User '{}' has no authorities and will be treated as 'not found'", username);
-
-            throw new UsernameNotFoundException(
-                    MessageFormat.format("User {0} has no GrantedAuthority", username));
-        }
-
-        return createUserDetails(username, user, dbAuths);
+        User user = users.get(0);
+        return new MyUserDetails(user);
     }
 
     protected UserDetails createUserDetails(String username,

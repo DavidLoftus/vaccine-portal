@@ -127,6 +127,22 @@
                         form.classList.add('was-validated')
                     }, false)
                 })
+
+            const passwordInput = document.getElementById("passwordFormInput");
+            const passwordConfirmInput = document.getElementById("passwordConfirmFormInput");
+
+            function validatePassword() {
+                if (passwordInput.value !== passwordConfirmInput.value) {
+                    passwordConfirmInput.setCustomValidity("Passwords do not match");
+                    console.log('Invalid');
+                } else {
+                    passwordConfirmInput.setCustomValidity("");
+                    console.log('Valid');
+                }
+            }
+
+            passwordInput.addEventListener("change", validatePassword);
+            passwordConfirmInput.addEventListener("change", validatePassword);
         })()
     </script>
 

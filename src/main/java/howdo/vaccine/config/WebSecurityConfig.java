@@ -2,7 +2,10 @@ package howdo.vaccine.config;
 
 import howdo.vaccine.filter.CSPNonceFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,6 +19,23 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Bean
+    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
+        return new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(ipFilterAuthenticationProvider());
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -23,7 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("GET", "/", "/login", "/register").permitAll()
                 .antMatchers("GET", "/css/**", "/fonts/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
-            .and().formLogin().loginPage("/login")
+            .and().formLogin()
+                .loginPage("/login")
             .and().httpBasic()
             .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .and().requiresChannel().anyRequest().requiresSecure();
@@ -52,5 +73,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
 
         return delegatingPasswordEncoder;
+    }
+
+    @Bean
+    public ServletContextInitializer servletContextInitializer() {
+        return servletContext -> servletContext.getSessionCookieConfig().setSecure(true);
     }
 }
