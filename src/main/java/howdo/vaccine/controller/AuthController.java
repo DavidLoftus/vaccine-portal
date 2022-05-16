@@ -15,6 +15,7 @@ import org.springframework.security.authentication.event.LogoutSuccessEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.w3c.dom.events.Event;
 
 
@@ -41,7 +43,7 @@ import org.w3c.dom.events.Event;
 public class AuthController {
 
     private static final Logger authLogger = LogManager.getLogger(AuthController.class);
-
+    private String qrCodeUrl;
 
     @Autowired
     UserService userService;
@@ -67,13 +69,24 @@ public class AuthController {
                 form.getNationality());
 
         AuthController.authLogger.info("New user \"" + user.getId() + "\" has been created");
-
+        if (user.isUsing2FA())
+        {
+            qrCodeUrl = userService.generateQRUrl(user);
+            response.sendRedirect("/qr");
+        }
         response.sendRedirect("/");
     }
 
     @GetMapping("/login")
     public String loginGet() {
         return "login";
+    }
+
+    @GetMapping("/qr")
+    public String qrGet(Model model)
+    {
+        model.addAttribute("qr", qrCodeUrl);
+        return "qr";
     }
 
     @Value("${portal.admin.password}")

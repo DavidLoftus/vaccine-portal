@@ -1,8 +1,12 @@
 package howdo.vaccine.config;
 
+import howdo.vaccine.authentication.CustomAuthenticationProvider;
+import howdo.vaccine.authentication.CustomWebAuthenticationDetailsSource;
 import howdo.vaccine.filter.CSPNonceFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,14 +20,17 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private CustomWebAuthenticationDetailsSource authenticationDetailsSource;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-                .antMatchers("GET", "/", "/login", "/register").permitAll()
+                .antMatchers("GET", "/", "/login", "/register", "/qr").permitAll()
                 .antMatchers("GET", "/css/**", "/fonts/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
-            .and().formLogin().loginPage("/login")
+            .and().formLogin().loginPage("/login").authenticationDetailsSource(authenticationDetailsSource)
             .and().httpBasic()
             .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             .and().requiresChannel().anyRequest().requiresSecure();
@@ -52,5 +59,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
 
         return delegatingPasswordEncoder;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authProvider() {
+        CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 }
