@@ -37,6 +37,7 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'mysql:mysql-connector-java:8.0.28'
     implementation('org.springframework.boot:spring-boot-starter-log4j2')
+    implementation 'org.jboss.aerogear:aerogear-otp-java:1.0.0'
 }
 
 description = 'Vaccine Registration Portal'
