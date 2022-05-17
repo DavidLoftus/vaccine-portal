@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public static String QR_PREFIX = "https://chart.googleapis.com/chart?chs=200x200&chld=M%%7C0&cht=qr&chl=";
 
     @Override
-    public User createUser(String ppsNumber, String password, String firstName, String lastName, Date dateOfBirth, String phoneNumber, String emailAddress, Nationality nationality, Set<String> authorities) {
+    public User createUser(String ppsNumber, String password, String firstName, String lastName, Date dateOfBirth, String phoneNumber, String emailAddress, Nationality nationality, boolean uses2FA, Set<String> authorities) {
         User user = new User();
         user.setPpsNumber(ppsNumber);
         user.setPassword(passwordEncoder.encode(password));
@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
         user.setEmailAddress(emailAddress);
         user.setNationality(nationality);
         user.setAuthorities(authorities);
+        user.setUsing2FA(uses2FA);
 
         user = userRepository.save(user);
 

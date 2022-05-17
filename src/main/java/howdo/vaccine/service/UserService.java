@@ -16,6 +16,7 @@ public interface UserService {
                     String phoneNumber,
                     String emailAddress,
                     Nationality nationality,
+                    boolean uses2FA,
                     Set<String> authorities);
 
     default User createUser(String ppsNumber,
@@ -25,8 +26,9 @@ public interface UserService {
                     Date dateOfBirth,
                     String phoneNumber,
                     String emailAddress,
-                    Nationality nationality) {
-        return this.createUser(ppsNumber, password, firstName, lastName, dateOfBirth, phoneNumber, emailAddress, nationality, Set.of("USER"));
+                    Nationality nationality,
+                    boolean uses2FA) {
+        return this.createUser(ppsNumber, password, firstName, lastName, dateOfBirth, phoneNumber, emailAddress, nationality, uses2FA, Set.of("USER"));
     }
 
     User getUser(String ppsNumber);

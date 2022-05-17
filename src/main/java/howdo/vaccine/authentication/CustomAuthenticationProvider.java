@@ -2,6 +2,7 @@ package howdo.vaccine.authentication;
 
 import howdo.vaccine.model.User;
 import howdo.vaccine.repository.UserRepository;
+import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.jboss.aerogear.security.otp.Totp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 {
@@ -19,8 +21,11 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
     public Authentication authenticate(Authentication auth) throws AuthenticationException
     {
         String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
-        User user = userRepository.getUserByEmailAddress(auth.getName()).get(0);
-        if ((user == null)) { throw new BadCredentialsException("Invalid username or password");}
+
+        UserDetails userDetails = getUserDetailsService().loadUserByUsername(auth.getName());
+
+        User user = userRepository.getUserByPpsNumber(auth.getName()).get(0);
+//        if ((user == null)) { throw new BadCredentialsException("Invalid username or password");}
 
         if(user.isUsing2FA())
         {
@@ -31,7 +36,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
             }
         }
         Authentication result = super.authenticate(auth);
-        return new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, result.getCredentials(), result.getAuthorities());
     }
 
     private boolean isValidLong(String code)

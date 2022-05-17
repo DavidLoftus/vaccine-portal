@@ -1,11 +1,12 @@
 package howdo.vaccine.controller;
 
-import howdo.vaccine.Application;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
 import howdo.vaccine.repository.UserRepository;
 import howdo.vaccine.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
@@ -26,24 +27,12 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.w3c.dom.events.Event;
 
 
 @Controller
 public class AuthController {
 
     private static final Logger authLogger = LogManager.getLogger(AuthController.class);
-    private String qrCodeUrl;
 
     @Autowired
     UserService userService;
@@ -66,13 +55,13 @@ public class AuthController {
                 form.getDateOfBirth(),
                 form.getPhoneNumber(),
                 form.getEmailAddress(),
-                form.getNationality());
+                form.getNationality(),
+                form.isUse2FA());
 
         AuthController.authLogger.info("New user \"" + user.getId() + "\" has been created");
-        if (user.isUsing2FA())
-        {
-            qrCodeUrl = userService.generateQRUrl(user);
+        if (user.isUsing2FA()) {
             response.sendRedirect("/qr");
+            return;
         }
         response.sendRedirect("/");
     }
@@ -85,7 +74,7 @@ public class AuthController {
     @GetMapping("/qr")
     public String qrGet(Model model)
     {
-        model.addAttribute("qr", qrCodeUrl);
+        model.addAttribute("qr", userService.generateQRUrl(userService.getCurrentUser()));
         return "qr";
     }
 
@@ -98,7 +87,7 @@ public class AuthController {
             userService.getUser("admin");
         } catch (UsernameNotFoundException e) {
             userService.createUser("admin", "password", "John", "Smith",
-                    new Date(), "0123456789", "admin@localhost", Nationality.IRISH,
+                    new Date(), "0123456789", "admin@localhost", Nationality.IRISH, false,
                     Set.of("USER", "ADMIN"));
         }
     }
@@ -106,7 +95,6 @@ public class AuthController {
 
     @EventListener
     public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
-
         UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
         User user = userService.getUser(details.getUsername());
         authLogger.info("User \"" + user.getId() + "\" has logged in");
