@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String ppsNumber) {
+    public User getUser(String ppsNumber) throws UsernameNotFoundException {
         List<User> users = userRepository.getUserByPpsNumber(ppsNumber);
         if (users.isEmpty()) {
             throw new UsernameNotFoundException("No such user with pps " + ppsNumber);

@@ -3,7 +3,6 @@ package howdo.vaccine.auth;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.lang.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static howdo.vaccine.jwt.SecurityConstants.SECRET;
+import static howdo.vaccine.auth.SecurityConstants.SECRET;
 
 @Component
 public class JWTAuthenticationProvider implements AuthenticationProvider {

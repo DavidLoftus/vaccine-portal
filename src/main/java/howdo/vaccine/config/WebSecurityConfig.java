@@ -1,10 +1,14 @@
 package howdo.vaccine.config;
 
+import howdo.vaccine.auth.TwoFactorAuthenticationDetailsSource;
 import howdo.vaccine.auth.IpFilterAuthenticationProvider;
 import howdo.vaccine.auth.JWTAuthenticationProvider;
+import howdo.vaccine.auth.TwoFactorAuthenticationProvider;
+import howdo.vaccine.controller.AuthController;
 import howdo.vaccine.filter.CSPNonceFilter;
 import howdo.vaccine.filter.JWTAuthenticationFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
+import howdo.vaccine.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
 
-import static howdo.vaccine.jwt.SecurityConstants.COOKIE_NAME;
+import static howdo.vaccine.auth.SecurityConstants.COOKIE_NAME;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -30,16 +34,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Bean
-    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
-        IpFilterAuthenticationProvider authenticationProvider = new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
-        return authenticationProvider;
-    }
+    @Autowired
+    private IpFilterAuthenticationProvider ipFilterAuthenticationProvider;
 
     @Autowired
     private JWTAuthenticationProvider jwtAuthenticationProvider;
+
+    @Autowired
+    private TwoFactorAuthenticationDetailsSource detailsSource;
+
+    @Autowired
+    AuthController authController;
+
+    @Bean
+    public TwoFactorAuthenticationProvider twoFactorAuthenticationProvider() {
+        TwoFactorAuthenticationProvider provider = new TwoFactorAuthenticationProvider();
+        provider.setUserService(userService);
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -47,8 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .userDetailsService(userDetailsService)
                 .and()
-                .authenticationProvider(ipFilterAuthenticationProvider())
-                .authenticationProvider(jwtAuthenticationProvider);
+                .authenticationProvider(ipFilterAuthenticationProvider)
+                .authenticationProvider(jwtAuthenticationProvider)
+                .authenticationProvider(twoFactorAuthenticationProvider());
     }
 
     @Override
@@ -90,9 +110,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http = http
                 .formLogin()
                     .successHandler(jwtFilter::successHandler)
+                    .authenticationDetailsSource(detailsSource)
                     .loginPage("/login")
                     .permitAll()
                 .and();
+
+        authController.setSuccessHandler(jwtFilter::successHandler);
 
         http = http.httpBasic().and();
 

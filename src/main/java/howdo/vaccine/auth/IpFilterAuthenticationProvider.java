@@ -1,5 +1,6 @@
 package howdo.vaccine.auth;
 
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Calendar;
@@ -15,14 +17,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-//@Component
-public class IpFilterAuthenticationProvider extends DaoAuthenticationProvider {
-    public IpFilterAuthenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        super();
-        setPasswordEncoder(passwordEncoder);
-        setUserDetailsService(userDetailsService);
-    }
-
+@Component
+public class IpFilterAuthenticationProvider implements AuthenticationProvider {
     public static final int IP_BAN_MINUTES = 20;
 
     private final Map<String, Date> bannedIps = new HashMap<>();
@@ -55,5 +51,10 @@ public class IpFilterAuthenticationProvider extends DaoAuthenticationProvider {
             throw new BadCredentialsException("IP Banned");
         }
         return null;
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return true;
     }
 }

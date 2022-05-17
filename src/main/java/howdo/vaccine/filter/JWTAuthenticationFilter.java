@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -21,8 +22,8 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static howdo.vaccine.jwt.SecurityConstants.COOKIE_NAME;
-import static howdo.vaccine.jwt.SecurityConstants.SECRET;
+import static howdo.vaccine.auth.SecurityConstants.COOKIE_NAME;
+import static howdo.vaccine.auth.SecurityConstants.SECRET;
 
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
@@ -35,10 +36,16 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                 return Arrays.stream(cookies)
                         .filter(cookie -> cookie.getName().equals(COOKIE_NAME))
                         .findFirst()
-                        .map(cookie -> new JWTAuthenticationToken(cookie.getValue())).orElse(null);
+                        .map(cookie -> makeAuthentication(cookie, request)).orElse(null);
             } catch (JWTDecodeException ignored) {}
         }
         return null;
+    }
+
+    private Authentication makeAuthentication(Cookie cookie, HttpServletRequest request) {
+        JWTAuthenticationToken authentication = new JWTAuthenticationToken(cookie.getValue());
+        authentication.setDetails(new WebAuthenticationDetails(request));
+        return authentication;
     }
 
     @Override
@@ -69,7 +76,11 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
 
         addCookie(token, response);
 
-        response.sendRedirect("/");
+        if (request.getAttribute("redirectLocation") != null) {
+            response.sendRedirect((String) request.getAttribute("redirectLocation"));
+        } else {
+            response.sendRedirect("/");
+        }
     }
 
     private void addCookie(String token, HttpServletResponse response)

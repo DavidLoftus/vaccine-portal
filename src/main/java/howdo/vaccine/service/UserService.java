@@ -2,6 +2,7 @@ package howdo.vaccine.service;
 
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -34,7 +35,7 @@ public interface UserService {
     void addLoginFailure(User user);
     void addLoginSuccess(User user);
 
-    User getUser(String ppsNumber);
+    User getUser(String ppsNumber) throws UsernameNotFoundException;
 
     User getCurrentUser();
 

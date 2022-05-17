@@ -1,10 +1,8 @@
-package howdo.vaccine.authentication;
+package howdo.vaccine.auth;
 
 import howdo.vaccine.model.User;
-import howdo.vaccine.repository.UserRepository;
-import howdo.vaccine.service.UserDetailsServiceImpl;
+import howdo.vaccine.service.UserService;
 import org.jboss.aerogear.security.otp.Totp;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,20 +10,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class CustomAuthenticationProvider extends DaoAuthenticationProvider
-{
-    @Autowired
-    private UserRepository userRepository;
+public class TwoFactorAuthenticationProvider extends DaoAuthenticationProvider {
+
+    private UserService userService;
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException
     {
-        String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
+        String verificationCode = ((TwoFactorAuthenticationDetails) auth.getDetails()).getVerificationCode();
 
         UserDetails userDetails = getUserDetailsService().loadUserByUsername(auth.getName());
 
-        User user = userRepository.getUserByPpsNumber(auth.getName()).get(0);
-//        if ((user == null)) { throw new BadCredentialsException("Invalid username or password");}
+        User user = userService.getUser(userDetails.getUsername());
 
         if(user.isUsing2FA())
         {
@@ -54,4 +50,12 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider
 
     @Override
     public boolean supports(Class<?> authentication) { return authentication.equals(UsernamePasswordAuthenticationToken.class); }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 }

@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -87,11 +88,7 @@ public class User {
 
     private boolean isUsing2FA;
 
-    //don't persist this
-    private String secret;
-    public User() {
-        this.secret= Base32.random();
-    }
+    private String secret = Base32.random();
 
     @Column
     private int loginAttempts = 0;

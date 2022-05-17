@@ -1,13 +1,13 @@
-package howdo.vaccine.authentication;
+package howdo.vaccine.auth;
 
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class CustomWebAuthenticationDetails extends WebAuthenticationDetails
+public class TwoFactorAuthenticationDetails extends WebAuthenticationDetails
 {
-    private String verificationCode;
-    public CustomWebAuthenticationDetails(HttpServletRequest request)
+    private final String verificationCode;
+    public TwoFactorAuthenticationDetails(HttpServletRequest request)
     {
         super(request);
         verificationCode = request.getParameter("2fa");

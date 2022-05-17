@@ -3,6 +3,7 @@ package howdo.vaccine.controller;
 import howdo.vaccine.auth.IpFilterAuthenticationProvider;
 import howdo.vaccine.auth.JWTAuthenticationToken;
 import howdo.vaccine.enums.Nationality;
+import howdo.vaccine.filter.JWTAuthenticationFilter;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
 import howdo.vaccine.service.UserDetailsServiceImpl;
@@ -13,11 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.authentication.event.LogoutSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +30,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -51,9 +57,18 @@ public class AuthController {
         return "register";
     }
 
-    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public void registerPost(HttpServletResponse response, @Valid @ModelAttribute("user") UserRegistrationForm form) throws IOException {
+    private AuthenticationSuccessHandler successHandler;
 
+    public AuthenticationSuccessHandler getSuccessHandler() {
+        return successHandler;
+    }
+
+    public void setSuccessHandler(AuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+    }
+
+    @PostMapping(value = "/register", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public void registerPost(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute("user") UserRegistrationForm form) throws IOException {
         User user = userService.createUser(form.getPpsNumber(),
                 form.getPassword(),
                 form.getFirstName(),
@@ -64,12 +79,17 @@ public class AuthController {
                 form.getNationality(),
                 form.isUse2FA());
 
+
         AuthController.authLogger.info("New user \"" + user.getId() + "\" has been created");
         if (user.isUsing2FA()) {
-            response.sendRedirect("/qr");
-            return;
+            request.setAttribute("redirectLocation", "/qr");
         }
-        response.sendRedirect("/");
+
+        try {
+            successHandler.onAuthenticationSuccess(request, response, new UsernamePasswordAuthenticationToken(user.getPpsNumber(), null));
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("/login")
@@ -139,18 +159,12 @@ public class AuthController {
 
     @EventListener
     public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
-        UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
-        User user = userService.getUser(details.getUsername());
-        authLogger.info("User \"" + user.getId() + "\" has logged in");
         Authentication authentication = event.getAuthentication();
         if (authentication instanceof JWTAuthenticationToken) return;
         UserDetailsServiceImpl.MyUserDetails userDetails = (UserDetailsServiceImpl.MyUserDetails) authentication.getPrincipal();
         userService.addLoginSuccess(userDetails.getUser());
 
         authLogger.info("User \"" + userDetails.getUser().getId() + "\" has logged in");
-    }
-
-
     }
 
     @EventListener
