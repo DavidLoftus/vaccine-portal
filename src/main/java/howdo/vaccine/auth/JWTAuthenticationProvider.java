@@ -50,24 +50,4 @@ public class JWTAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return JWTAuthenticationToken.class.isAssignableFrom(authentication);
     }
-
-    public String sign(String subject) {
-        return JWT.create()
-                .withSubject(subject)
-                .withExpiresAt(new Date((long) (System.currentTimeMillis() + 8.64e+8))) //plus 10 days in milliseconds
-                .sign(algorithm);
-    }
-
-    public boolean validate(String token) {
-        try {
-            verifier.verify(token);
-            return true;
-        } catch (JWTVerificationException ignored) {
-            return false;
-        }
-    }
-
-    private String getUsername(String token) {
-        return verifier.verify(token).getSubject();
-    }
 }

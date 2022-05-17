@@ -24,7 +24,7 @@ import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static howdo.vaccine.jwt.SecurityConstants.COOKIE_NAME;
 import static howdo.vaccine.jwt.SecurityConstants.SECRET;
 
-public class JWTPreAuthenticationFilter extends GenericFilterBean {
+public class JWTAuthenticationFilter extends GenericFilterBean {
 
     private AuthenticationManager authenticationManager;
 

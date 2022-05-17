@@ -3,7 +3,7 @@ package howdo.vaccine.config;
 import howdo.vaccine.auth.IpFilterAuthenticationProvider;
 import howdo.vaccine.auth.JWTAuthenticationProvider;
 import howdo.vaccine.filter.CSPNonceFilter;
-import howdo.vaccine.filter.JWTPreAuthenticationFilter;
+import howdo.vaccine.filter.JWTAuthenticationFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -85,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
             .and();
 
-        JWTPreAuthenticationFilter jwtFilter = new JWTPreAuthenticationFilter();
+        JWTAuthenticationFilter jwtFilter = new JWTAuthenticationFilter();
 
         http = http
                 .formLogin()
