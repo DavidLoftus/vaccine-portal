@@ -43,6 +43,8 @@ public class UserRegistrationForm {
     @NotNull
     private Nationality nationality;
 
+    private boolean use2FA;
+
     public String getPassword() {
         return password;
     }
@@ -113,5 +115,13 @@ public class UserRegistrationForm {
 
     public void setNationality(Nationality nationality) {
         this.nationality = nationality;
+    }
+
+    public boolean isUse2FA() {
+        return use2FA;
+    }
+
+    public void setUse2FA(boolean use2FA) {
+        this.use2FA = use2FA;
     }
 }

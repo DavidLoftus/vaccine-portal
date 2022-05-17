@@ -4,6 +4,7 @@ import howdo.vaccine.enums.Nationality;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.ColumnTransformer;
 import org.slf4j.Logger;
+import org.jboss.aerogear.security.otp.api.Base32;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -83,6 +84,14 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     @OrderBy("appointmentTime")
     private List<Appointment> appointments;
+
+    private boolean isUsing2FA;
+
+    //don't persist this
+    private String secret;
+    public User() {
+        this.secret= Base32.random();
+    }
 
     @Column
     private int loginAttempts = 0;
@@ -201,4 +210,12 @@ public class User {
     public void setAccountLockExpiry(Date accountLockExpiry) {
         this.accountLockExpiry = accountLockExpiry;
     }
+
+    public String getSecret() { return secret; }
+
+    public void setSecret(String secret) { this.secret = secret; }
+
+    public boolean isUsing2FA() { return isUsing2FA; }
+
+    public void setUsing2FA(boolean using2FA) { isUsing2FA = using2FA; }
 }

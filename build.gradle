@@ -42,6 +42,7 @@ dependencies {
     implementation 'com.auth0:java-jwt:4.0.0-beta.0'
     // https://mvnrepository.com/artifact/com.vaadin.external.google/android-json
     implementation 'com.vaadin.external.google:android-json:0.0.20131108.vaadin1'
+    implementation 'org.jboss.aerogear:aerogear-otp-java:1.0.0'
 }
 
 description = 'Vaccine Registration Portal'

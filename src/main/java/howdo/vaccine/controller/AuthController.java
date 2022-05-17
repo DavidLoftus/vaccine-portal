@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,6 @@ import java.util.Set;
 public class AuthController {
 
     private static final Logger authLogger = LogManager.getLogger(AuthController.class);
-
 
     @Autowired
     UserService userService;
@@ -61,16 +61,27 @@ public class AuthController {
                 form.getDateOfBirth(),
                 form.getPhoneNumber(),
                 form.getEmailAddress(),
-                form.getNationality());
+                form.getNationality(),
+                form.isUse2FA());
 
         AuthController.authLogger.info("New user \"" + user.getId() + "\" has been created");
-
+        if (user.isUsing2FA()) {
+            response.sendRedirect("/qr");
+            return;
+        }
         response.sendRedirect("/");
     }
 
     @GetMapping("/login")
     public String loginGet() {
         return "login";
+    }
+
+    @GetMapping("/qr")
+    public String qrGet(Model model)
+    {
+        model.addAttribute("qr", userService.generateQRUrl(userService.getCurrentUser()));
+        return "qr";
     }
 
     @Value("${portal.admin.password}")
@@ -82,7 +93,7 @@ public class AuthController {
             userService.getUser("admin");
         } catch (UsernameNotFoundException e) {
             userService.createUser("admin", adminPassword, "John", "Smith",
-                    new Date(), "0123456789", "admin@localhost", Nationality.IRISH,
+                    new Date(), "0123456789", "admin@localhost", Nationality.IRISH, false,
                     Set.of("USER", "ADMIN"));
         }
     }
@@ -128,6 +139,9 @@ public class AuthController {
 
     @EventListener
     public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
+        UserDetails details = (UserDetails) event.getAuthentication().getPrincipal();
+        User user = userService.getUser(details.getUsername());
+        authLogger.info("User \"" + user.getId() + "\" has logged in");
         Authentication authentication = event.getAuthentication();
         if (authentication instanceof JWTAuthenticationToken) return;
         UserDetailsServiceImpl.MyUserDetails userDetails = (UserDetailsServiceImpl.MyUserDetails) authentication.getPrincipal();
@@ -137,6 +151,7 @@ public class AuthController {
     }
 
 
+    }
 
     @EventListener
     public void logoutSuccess(LogoutSuccessEvent event) {
