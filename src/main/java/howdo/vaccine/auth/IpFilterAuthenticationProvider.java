@@ -1,4 +1,4 @@
-package howdo.vaccine.config;
+package howdo.vaccine.auth;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import java.time.Instant;
@@ -16,7 +17,6 @@ import java.util.Map;
 
 //@Component
 public class IpFilterAuthenticationProvider extends DaoAuthenticationProvider {
-
     public IpFilterAuthenticationProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
         super();
         setPasswordEncoder(passwordEncoder);
@@ -48,12 +48,12 @@ public class IpFilterAuthenticationProvider extends DaoAuthenticationProvider {
         return false;
     }
 
-//    @Override
-//    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-//        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
-//        if (isBanned(details.getRemoteAddress())) {
-//            throw new BadCredentialsException("IP Banned");
-//        }
-//        return super.authenticate(authentication);
-//    }
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+        if (isBanned(details.getRemoteAddress())) {
+            throw new BadCredentialsException("IP Banned");
+        }
+        return null;
+    }
 }

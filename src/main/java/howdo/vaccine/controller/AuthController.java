@@ -1,6 +1,7 @@
 package howdo.vaccine.controller;
 
-import howdo.vaccine.config.IpFilterAuthenticationProvider;
+import howdo.vaccine.auth.IpFilterAuthenticationProvider;
+import howdo.vaccine.auth.JWTAuthenticationToken;
 import howdo.vaccine.enums.Nationality;
 import howdo.vaccine.model.User;
 import howdo.vaccine.model.UserRegistrationForm;
@@ -42,8 +43,8 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-//    @Autowired
-//    IpFilterAuthenticationProvider ipFilter;
+    @Autowired
+    IpFilterAuthenticationProvider ipFilter;
 
     @GetMapping("/register")
     public String registerGet(@ModelAttribute("user") UserRegistrationForm user) {
@@ -100,7 +101,7 @@ public class AuthController {
         if (count >= 5) {
             count = 0;
             authLogger.warn("IP " + ip + " has exceeded maximum failed login attempts, banning for 20 minutes.");
-            //ipFilter.banAddress(ip);
+            ipFilter.banAddress(ip);
         }
         authFailures.put(ip, count);
     }
@@ -128,6 +129,7 @@ public class AuthController {
     @EventListener
     public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
+        if (authentication instanceof JWTAuthenticationToken) return;
         UserDetailsServiceImpl.MyUserDetails userDetails = (UserDetailsServiceImpl.MyUserDetails) authentication.getPrincipal();
         userService.addLoginSuccess(userDetails.getUser());
 

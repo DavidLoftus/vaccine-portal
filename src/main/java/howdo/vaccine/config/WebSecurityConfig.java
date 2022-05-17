@@ -1,8 +1,9 @@
 package howdo.vaccine.config;
 
+import howdo.vaccine.auth.IpFilterAuthenticationProvider;
+import howdo.vaccine.auth.JWTAuthenticationProvider;
 import howdo.vaccine.filter.CSPNonceFilter;
-import howdo.vaccine.filter.JWTAuthenticationFilter;
-import howdo.vaccine.filter.JWTAuthorizationFilter;
+import howdo.vaccine.filter.JWTPreAuthenticationFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -17,10 +18,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.HeaderWriterFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import static howdo.vaccine.filter.SecurityConstants.COOKIE_NAME;
+import static howdo.vaccine.jwt.SecurityConstants.COOKIE_NAME;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -31,38 +32,82 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-//    @Bean
-//    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
-//        return new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
-//    }
+    @Bean
+    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
+        IpFilterAuthenticationProvider authenticationProvider = new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
+        return authenticationProvider;
+    }
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) {
+    @Autowired
+    private JWTAuthenticationProvider jwtAuthenticationProvider;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.authenticationProvider(ipFilterAuthenticationProvider());
-//    }
+        auth
+                .userDetailsService(userDetailsService)
+                .and()
+                .authenticationProvider(ipFilterAuthenticationProvider())
+                .authenticationProvider(jwtAuthenticationProvider);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+
+        // Enable CORS and disable CSRF
+        http = http.cors().and().csrf().disable();
+
+        // Set session management to stateless
+        http = http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and();
+
+        // Set unauthorized requests exception handler
+//        http = http
+//                .exceptionHandling()
+//                .authenticationEntryPoint(
+//                        (request, response, ex) -> {
+//                            response.sendError(
+//                                    HttpServletResponse.SC_UNAUTHORIZED,
+//                                    ex.getMessage()
+//                            );
+//                        }
+//                )
+//                .and();
+
+
+
+        http = http
             .authorizeRequests()
                 .antMatchers("GET", "/", "/login", "/register").permitAll()
                 .antMatchers("GET", "/css/**", "/fonts/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
-            .and().formLogin()
-                .loginPage("/login").permitAll()
-            .and().httpBasic()
-            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).deleteCookies(COOKIE_NAME)
-                .and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and().requiresChannel().anyRequest().requiresSecure();
+            .and();
 
-        http.cors().and()
-            .csrf().disable()
-            .headers()
+        JWTPreAuthenticationFilter jwtFilter = new JWTPreAuthenticationFilter();
+
+        http = http
+                .formLogin()
+                    .successHandler(jwtFilter::successHandler)
+                    .loginPage("/login")
+                    .permitAll()
+                .and();
+
+        http = http.httpBasic().and();
+
+
+        http = http.logout().logoutUrl("/logout").deleteCookies(COOKIE_NAME).and();
+
+        // Add JWT token filter
+        http = http
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CSPNonceFilter(), HeaderWriterFilter.class);
+
+        http.headers()
                 .xssProtection()
-                .and().contentSecurityPolicy("script-src 'self' 'unsafe-inline' 'nonce-{nonce}'; object-src 'none'; base-uri 'none'; report-uri http://localhost:8000/");
-        http.addFilterBefore(new CSPNonceFilter(), HeaderWriterFilter.class);
+            .and()
+                .contentSecurityPolicy("script-src 'self' 'unsafe-inline' 'nonce-{nonce}'; object-src 'none'; base-uri 'none';/");
     }
 
     @Bean
