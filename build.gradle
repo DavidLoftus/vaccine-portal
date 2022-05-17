@@ -37,6 +37,11 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
     implementation 'mysql:mysql-connector-java:8.0.28'
     implementation('org.springframework.boot:spring-boot-starter-log4j2')
+    implementation('io.jsonwebtoken:jjwt:0.2')
+    // https://mvnrepository.com/artifact/com.auth0/java-jwt
+    implementation 'com.auth0:java-jwt:4.0.0-beta.0'
+    // https://mvnrepository.com/artifact/com.vaadin.external.google/android-json
+    implementation 'com.vaadin.external.google:android-json:0.0.20131108.vaadin1'
 }
 
 description = 'Vaccine Registration Portal'
