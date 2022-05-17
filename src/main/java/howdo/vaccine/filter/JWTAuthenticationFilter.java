@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -47,7 +48,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException
     {
         String token = JWT.create().
-                withSubject( ((User) authResult.getPrincipal()).getPpsNumber() )
+                withSubject( ((UserDetails) authResult.getPrincipal()).getUsername() )
                 .withExpiresAt(new Date((long) (System.currentTimeMillis() + 8.64e+8))) //plus 10 days in milliseconds
                 .sign(HMAC512(SECRET.getBytes()));
 
