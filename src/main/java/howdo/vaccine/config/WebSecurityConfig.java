@@ -1,6 +1,8 @@
 package howdo.vaccine.config;
 
 import howdo.vaccine.filter.CSPNonceFilter;
+import howdo.vaccine.filter.JWTAuthenticationFilter;
+import howdo.vaccine.filter.JWTAuthorizationFilter;
 import howdo.vaccine.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
@@ -9,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -16,6 +19,8 @@ import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import static howdo.vaccine.filter.SecurityConstants.COOKIE_NAME;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -26,15 +31,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Bean
-    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
-        return new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
-    }
+//    @Bean
+//    public IpFilterAuthenticationProvider ipFilterAuthenticationProvider() {
+//        return new IpFilterAuthenticationProvider(passwordEncoder, userDetailsService);
+//    }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(ipFilterAuthenticationProvider());
-    }
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) {
+//        auth.authenticationProvider(ipFilterAuthenticationProvider());
+//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -44,12 +49,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("GET", "/css/**", "/fonts/**", "/js/**").permitAll()
                 .anyRequest().authenticated()
             .and().formLogin()
-                .loginPage("/login")
+                .loginPage("/login").permitAll()
             .and().httpBasic()
-            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .and().logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).deleteCookies(COOKIE_NAME)
+                .and().addFilter(new JWTAuthenticationFilter(authenticationManager()))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and().requiresChannel().anyRequest().requiresSecure();
 
-        http
+        http.cors().and()
             .csrf().disable()
             .headers()
                 .xssProtection()

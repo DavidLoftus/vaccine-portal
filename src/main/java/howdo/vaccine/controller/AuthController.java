@@ -42,8 +42,8 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    IpFilterAuthenticationProvider ipFilter;
+//    @Autowired
+//    IpFilterAuthenticationProvider ipFilter;
 
     @GetMapping("/register")
     public String registerGet(@ModelAttribute("user") UserRegistrationForm user) {
@@ -100,7 +100,7 @@ public class AuthController {
         if (count >= 5) {
             count = 0;
             authLogger.warn("IP " + ip + " has exceeded maximum failed login attempts, banning for 20 minutes.");
-            ipFilter.banAddress(ip);
+            //ipFilter.banAddress(ip);
         }
         authFailures.put(ip, count);
     }

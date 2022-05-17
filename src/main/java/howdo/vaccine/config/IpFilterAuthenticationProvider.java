@@ -48,12 +48,12 @@ public class IpFilterAuthenticationProvider extends DaoAuthenticationProvider {
         return false;
     }
 
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
-        if (isBanned(details.getRemoteAddress())) {
-            throw new BadCredentialsException("IP Banned");
-        }
-        return super.authenticate(authentication);
-    }
+//    @Override
+//    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+//        WebAuthenticationDetails details = (WebAuthenticationDetails) authentication.getDetails();
+//        if (isBanned(details.getRemoteAddress())) {
+//            throw new BadCredentialsException("IP Banned");
+//        }
+//        return super.authenticate(authentication);
+//    }
 }
